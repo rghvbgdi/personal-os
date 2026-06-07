@@ -8,6 +8,15 @@ export default {
     name: 'Personal OS',
     slug: 'personal-os',
     version: '1.0.0',
+
+    updates: {
+      url: 'https://u.expo.dev/5c2ae4b2-300a-45eb-adf6-4c8ae5926d6f',
+    },
+
+    runtimeVersion: {
+      policy: 'appVersion',
+    },
+
     orientation: 'portrait',
     icon: './assets/icon.png',
     userInterfaceStyle: 'dark',
