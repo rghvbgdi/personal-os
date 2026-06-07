@@ -1,8 +1,6 @@
 // app.config.js
 // ─── PRODUCTION API URL ────────────────────────────────────────────────────────
-// Once your Render backend is live, replace the URL below with your actual
-// Render service URL (e.g. https://expense-tracker-api.onrender.com/api/v1)
-// This is what your iPhone uses via Expo Go when your laptop is OFF.
+// iPhone hits this Render URL directly — works even when laptop is OFF.
 const PROD_API_URL = 'https://personal-os-c6lc.onrender.com/api/v1';
 
 export default {
