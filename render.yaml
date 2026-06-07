@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: expense-tracker-api
+    runtime: node
+    region: singapore          # closest free-tier region to India
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8000
+      # ─── Set these in the Render dashboard (never commit real values) ─────────
+      - key: MONGO_URI
+        sync: false            # means: fill manually in Render dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false            # e.g. https://your-app.vercel.app
+      - key: JWT_ACCESS_EXPIRES
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES
+        value: 7d
+      - key: BCRYPT_ROUNDS
+        value: 12

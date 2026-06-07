@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #404040;
+  }
+
+  ::selection {
+    background: rgba(5, 150, 105, 0.25);
+    color: #fafafa;
+  }
+}
+
+@layer components {
+  .stat-card {
+    @apply rounded-xl bg-surface border border-border p-5 shadow-card;
+  }
+  .section-title {
+    @apply text-sm font-semibold text-text-secondary uppercase tracking-wider;
+  }
+}
