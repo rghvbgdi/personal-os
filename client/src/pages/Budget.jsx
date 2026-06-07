@@ -15,32 +15,24 @@ import { evaluateMath } from '@/components/ui/MathInput.jsx';
 
 // ── Status helpers ─────────────────────────────────────────────────────────────
 function getBurnStatus(pct) {
-  if (pct >= 100) return { label: 'Over budget',  color: '#ef4444', textColor: 'text-danger',  bg: 'bg-danger/10',  icon: Flame };
-  if (pct >= 80)  return { label: 'Almost there', color: '#f59e0b', textColor: 'text-warning', bg: 'bg-warning/10', icon: AlertTriangle };
-  if (pct >= 50)  return { label: 'On track',     color: '#3b82f6', textColor: 'text-info',    bg: 'bg-info/10',    icon: TrendingDown };
-  return             { label: 'Healthy',       color: '#059669', textColor: 'text-accent',  bg: 'bg-accent/10',  icon: ShieldCheck };
+  if (pct >= 100) return { label: 'Over budget',  color: '#ef4444', textColor: 'text-[#ef4444]', bg: 'bg-[#ef4444]/10', icon: Flame };
+  if (pct >= 80)  return { label: 'Almost there', color: '#f59e0b', textColor: 'text-[#f59e0b]', bg: 'bg-[#f59e0b]/10', icon: AlertTriangle };
+  if (pct >= 50)  return { label: 'On track',     color: '#3b82f6', textColor: 'text-[#3b82f6]', bg: 'bg-[#3b82f6]/10', icon: TrendingDown };
+  return             { label: 'Healthy',       color: '#059669', textColor: 'text-[#059669]', bg: 'bg-[#059669]/10', icon: ShieldCheck };
 }
 
 // ── Animated bar ────────────────────────────────────────────────────────────
 function BurnBar({ pct, color }) {
   const clamped = Math.min(pct, 100);
   return (
-    <div className="relative h-2.5 w-full rounded-full bg-surface-2 overflow-hidden">
+    <div className="relative h-2 w-full rounded-full bg-[#1a1a1a] overflow-hidden">
       <motion.div
         initial={{ width: 0 }}
         animate={{ width: `${clamped}%` }}
-        transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
         className="absolute inset-y-0 left-0 rounded-full"
-        style={{ background: `linear-gradient(90deg, ${color}88, ${color})` }}
+        style={{ background: `linear-gradient(90deg, ${color}80, ${color})` }}
       />
-      {clamped >= 80 && (
-        <motion.div
-          animate={{ opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-y-0 rounded-full"
-          style={{ left: `${Math.max(clamped - 8, 0)}%`, width: '8%', background: `${color}60`, filter: 'blur(3px)' }}
-        />
-      )}
     </div>
   );
 }
@@ -66,43 +58,43 @@ function CategoryBudgetRow({ cat, limit, spent, onSave, onNavigate }) {
   };
 
   return (
-    <motion.div layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+    <motion.div layout initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }}
       className={cn(
-        'group relative rounded-2xl border bg-surface p-4 transition-all duration-200 hover:shadow-elevated',
-        pct >= 100 ? 'border-danger/30' : pct >= 80 ? 'border-warning/30' : 'border-border hover:border-accent/30',
+        'rounded-2xl border bg-[#111] p-4 transition-all duration-200',
+        pct >= 100 ? 'border-[#ef4444]/25' : pct >= 80 ? 'border-[#f59e0b]/25' : 'border-[#1e1e1e]',
       )}
     >
       {/* Row: icon + name + status + edit/amount */}
       <div className="flex items-start justify-between gap-2 mb-3">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
-          {/* Category icon — clickable to drill into expenses */}
+          {/* Category icon */}
           <button
             onClick={() => onNavigate(cat.value)}
             title={`View ${cat.label} expenses`}
-            className="text-2xl leading-none flex-shrink-0 hover:scale-110 transition-transform"
+            className="text-xl leading-none flex-shrink-0 touch-manipulation"
           >
             {cat.icon}
           </button>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="text-sm font-semibold text-text-primary truncate">{cat.label}</p>
+              <p className="text-sm font-semibold text-[#e0e0e0] truncate">{cat.label}</p>
               {hasData && (
                 <button
                   onClick={() => onNavigate(cat.value)}
                   title="View expenses"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="touch-manipulation"
                 >
-                  <ExternalLink className="h-3 w-3 text-text-muted hover:text-accent" />
+                  <ExternalLink className="h-3 w-3 text-[#333] hover:text-[#059669]" />
                 </button>
               )}
             </div>
             {limit > 0 ? (
-              <div className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-semibold mt-0.5', status.bg, status.textColor)}>
+              <div className={cn('inline-flex items-center gap-1 px-1.5 py-0.5 rounded-lg text-[9px] font-bold mt-0.5', status.bg, status.textColor)}>
                 <StatusIcon className="h-2.5 w-2.5" />
                 {status.label}
               </div>
             ) : hasData ? (
-              <p className="text-[11px] text-text-muted mt-0.5">No limit set</p>
+              <p className="text-[10px] text-[#444] mt-0.5">No limit set</p>
             ) : null}
           </div>
         </div>
@@ -112,33 +104,37 @@ function CategoryBudgetRow({ cat, limit, spent, onSave, onNavigate }) {
           {editing ? (
             <div className="flex items-center gap-1.5">
               <div className="relative">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-text-muted">₹</span>
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-[#444]">₹</span>
                 <input
                   autoFocus type="text" inputMode="decimal" value={value}
                   onChange={(e) => setValue(e.target.value)}
                   onBlur={() => setValue(evaluateMath(String(value)))}
                   onKeyDown={(e) => { if (e.key === 'Enter') handleSave(); if (e.key === 'Escape') setEditing(false); }}
-                  className="w-28 pl-6 pr-2 py-1.5 text-sm bg-surface-2 border border-accent rounded-lg text-text-primary focus:outline-none focus:ring-1 focus:ring-accent/50"
+                  className="w-28 pl-6 pr-2 py-1.5 text-sm bg-[#1a1a1a] border border-[#059669] rounded-xl text-[#e0e0e0] focus:outline-none focus:ring-1 focus:ring-[#059669]/40"
                 />
               </div>
-              <button onClick={handleSave} className="p-1.5 rounded-lg bg-accent text-white hover:opacity-90 transition-opacity"><Check className="h-3.5 w-3.5" /></button>
-              <button onClick={() => setEditing(false)} className="p-1.5 rounded-lg bg-surface-2 text-text-muted hover:text-text-secondary transition-colors"><X className="h-3.5 w-3.5" /></button>
+              <button onClick={handleSave} className="p-1.5 rounded-lg bg-[#059669] text-white hover:opacity-90 transition-opacity touch-manipulation">
+                <Check className="h-3.5 w-3.5" />
+              </button>
+              <button onClick={() => setEditing(false)} className="p-1.5 rounded-lg bg-[#1a1a1a] text-[#555] hover:text-[#888] transition-colors touch-manipulation">
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
           ) : (
             <div className="flex items-center gap-1.5">
               <div className="text-right">
-                <p className="text-sm font-bold text-text-primary">
-                  {limit > 0 ? formatCurrency(limit) : <span className="text-text-muted font-normal text-xs">Not set</span>}
+                <p className="text-sm font-bold text-[#e0e0e0]">
+                  {limit > 0 ? formatCurrency(limit) : <span className="text-[#444] font-normal text-xs">Not set</span>}
                 </p>
                 {hasData && (
-                  <p className={cn('text-xs font-medium', pct >= 100 ? 'text-danger' : 'text-text-muted')}>
+                  <p className={cn('text-xs font-medium', pct >= 100 ? 'text-[#ef4444]' : 'text-[#444]')}>
                     {formatCurrency(spent)} spent
                   </p>
                 )}
               </div>
               <button
                 onClick={() => { setValue(limit || ''); setEditing(true); }}
-                className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-surface-2 text-text-muted hover:text-accent transition-all"
+                className="p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-xl hover:bg-[#1a1a1a] text-[#444] hover:text-[#059669] transition-all touch-manipulation"
               >
                 <Pencil className="h-3.5 w-3.5" />
               </button>
@@ -151,9 +147,9 @@ function CategoryBudgetRow({ cat, limit, spent, onSave, onNavigate }) {
       {limit > 0 && (
         <>
           <BurnBar pct={pct} color={status.color} />
-          <div className="flex justify-between mt-2 text-[11px]">
-            <span className="text-text-muted">{pct}% used</span>
-            <span className={remaining < 0 ? 'text-danger font-semibold' : 'text-text-secondary'}>
+          <div className="flex justify-between mt-1.5 text-[10px]">
+            <span className="text-[#444]">{pct}% used</span>
+            <span className={remaining < 0 ? 'text-[#ef4444] font-semibold' : 'text-[#555]'}>
               {remaining < 0
                 ? `₹${Math.abs(remaining).toLocaleString('en-IN')} over`
                 : `₹${remaining.toLocaleString('en-IN')} left`}
@@ -162,15 +158,13 @@ function CategoryBudgetRow({ cat, limit, spent, onSave, onNavigate }) {
         </>
       )}
       {!limit && hasData && (
-        <div className="mt-1">
-          <div className="h-2 w-full rounded-full border border-dashed border-border bg-surface-2 overflow-hidden">
-            <div className="h-full w-1/3 rounded-full bg-warning/30" />
-          </div>
-          <p className="text-[11px] text-text-muted mt-1.5">No limit — tap ✏️ to set one</p>
+        <div className="mt-1.5">
+          <div className="h-1.5 w-full rounded-full border border-dashed border-[#2a2a2a] bg-[#1a1a1a]" />
+          <p className="text-[10px] text-[#444] mt-1">No limit — tap ✏️ to set one</p>
         </div>
       )}
       {!limit && !hasData && (
-        <div className="h-2 w-full rounded-full border border-dashed border-border/40 mt-1" />
+        <div className="h-1.5 w-full rounded-full border border-dashed border-[#1e1e1e] mt-1" />
       )}
     </motion.div>
   );
@@ -205,7 +199,6 @@ export default function Budget() {
     });
   };
 
-  // Navigate to expenses with filters matching current budget page context
   const handleCategoryNavigate = (categoryValue) => {
     const params = new URLSearchParams();
     params.set('category', categoryValue);
@@ -220,7 +213,6 @@ export default function Budget() {
       params.set('timeRange', 'yearly');
       params.set('targetYear', String(d.getFullYear()));
     } else {
-      // 'all' or unknown — show all time
       params.set('timeRange', 'all');
     }
     navigate(`/expenses?${params.toString()}`);
@@ -242,24 +234,28 @@ export default function Budget() {
     <PageLayout
       title="Budget"
       subtitle="Set limits, track burn rate"
-      actions={<TimeRangeFilter onChange={setDateRange} defaultRange="monthly" />}
     >
-      <div className="space-y-5">
+      {/* All content flows naturally inside PageLayout's scrollable main */}
+      <div className="space-y-4">
+
+        {/* Time range filter — inside content area, never touching the sticky header */}
+        <TimeRangeFilter onChange={setDateRange} defaultRange="yearly" />
 
         {/* Overview cards */}
         {!isLoading && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 gap-2.5">
             {[
-              { label: 'Total budget', value: formatCurrency(totalBudget), sub: 'across categories', color: 'text-info', grad: 'from-info/10' },
-              { label: 'Total spent',  value: formatCurrency(totalSpent),  sub: `${totalPct}% of budget`, color: totalPct > 80 ? 'text-danger' : 'text-warning', grad: 'from-warning/10' },
-              { label: 'Remaining',    value: formatCurrency(Math.max(0, totalBudget - totalSpent)), sub: totalBudget > 0 ? `${Math.max(0, 100 - totalPct)}% left` : 'Set a budget', color: 'text-accent', grad: 'from-accent/10' },
-              { label: 'Over limit',   value: overBudgetCats.length, sub: overBudgetCats.length > 0 ? overBudgetCats.map(c => c.label).slice(0, 2).join(', ') : 'All clear 🎉', color: overBudgetCats.length > 0 ? 'text-danger' : 'text-accent', grad: 'from-danger/10' },
+              { label: 'Total Budget', value: formatCurrency(totalBudget), sub: 'across all', color: 'text-[#3b82f6]' },
+              { label: 'Total Spent',  value: formatCurrency(totalSpent),  sub: `${totalPct}% of budget`, color: totalPct > 80 ? 'text-[#ef4444]' : 'text-[#f59e0b]' },
+              { label: 'Remaining',    value: formatCurrency(Math.max(0, totalBudget - totalSpent)), sub: totalBudget > 0 ? `${Math.max(0, 100 - totalPct)}% left` : 'Set a budget', color: 'text-[#059669]' },
+              { label: 'Over Limit',   value: overBudgetCats.length, sub: overBudgetCats.length > 0 ? overBudgetCats.map(c => c.label).slice(0, 2).join(', ') : 'All clear 🎉', color: overBudgetCats.length > 0 ? 'text-[#ef4444]' : 'text-[#059669]' },
             ].map((s, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
-                className={cn('rounded-2xl bg-gradient-to-br border border-border p-4 shadow-card', s.grad, 'to-surface')}>
-                <p className="text-xs text-text-muted mb-1 font-medium uppercase tracking-wider">{s.label}</p>
-                <p className={cn('text-xl font-bold', s.color)}>{s.value}</p>
-                <p className="text-xs text-text-muted mt-0.5 truncate">{s.sub}</p>
+              <motion.div key={i} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
+                className="rounded-2xl bg-[#111] border border-[#1e1e1e] p-3.5"
+              >
+                <p className="text-[9px] font-bold text-[#444] uppercase tracking-wider mb-1.5">{s.label}</p>
+                <p className={cn('text-lg font-bold leading-tight', s.color)}>{s.value}</p>
+                <p className="text-[10px] text-[#444] mt-0.5 truncate">{s.sub}</p>
               </motion.div>
             ))}
           </div>
@@ -267,20 +263,21 @@ export default function Budget() {
 
         {/* Overall burn bar */}
         {totalBudget > 0 && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="rounded-2xl bg-surface border border-border p-5 shadow-card">
+          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
+            className="rounded-2xl bg-[#111] border border-[#1e1e1e] p-4"
+          >
             <div className="flex items-center justify-between mb-3">
               <div>
-                <p className="text-sm font-semibold text-text-primary">Overall Burn Rate</p>
-                <p className="text-xs text-text-muted">Across all categories · {dateRange.label || 'selected period'}</p>
+                <p className="text-sm font-bold text-[#e0e0e0]">Overall Burn Rate</p>
+                <p className="text-[10px] text-[#444] mt-0.5">{dateRange.label || 'selected period'}</p>
               </div>
-              <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-bold', overallStatus.bg, overallStatus.textColor)}>
+              <div className={cn('flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold', overallStatus.bg, overallStatus.textColor)}>
                 <overallStatus.icon className="h-3.5 w-3.5" />
                 {totalPct}%
               </div>
             </div>
             <BurnBar pct={totalPct} color={overallStatus.color} />
-            <div className="flex justify-between mt-2 text-xs text-text-muted">
+            <div className="flex justify-between mt-2 text-[10px] text-[#444]">
               <span>{formatCurrency(totalSpent)} spent</span>
               <span>{formatCurrency(totalBudget)} budget</span>
             </div>
@@ -289,16 +286,20 @@ export default function Budget() {
 
         {/* Category grid */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-20"><Spinner size="lg" className="text-accent" /></div>
+          <div className="flex items-center justify-center py-16">
+            <Spinner size="lg" className="text-[#059669]" />
+          </div>
         ) : (
           <>
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold text-text-muted uppercase tracking-widest">Category Limits — {dateRange.label || 'selected period'}</p>
-              <p className="text-xs text-text-muted">Hover to edit · Click icon to view expenses</p>
+            <div className="flex items-center justify-between px-0.5">
+              <p className="text-[9px] font-bold text-[#444] uppercase tracking-wider">
+                Category Limits — {dateRange.label || 'selected period'}
+              </p>
+              <p className="text-[9px] text-[#333]">Tap ✏️ to edit</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 gap-2.5">
               {EXPENSE_CATEGORIES.filter((c) => c.value !== 'other').map((cat, i) => (
-                <motion.div key={cat.value} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }}>
+                <motion.div key={cat.value} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.025 }}>
                   <CategoryBudgetRow
                     cat={cat}
                     limit={getLimitForCat(cat.value)}

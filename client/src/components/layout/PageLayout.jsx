@@ -4,35 +4,39 @@ import Header from './Header.jsx';
 import BottomNav from './BottomNav.jsx';
 
 const pageVariants = {
-  initial: { opacity: 0, y: 6 },
+  initial: { opacity: 0, y: 5 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -6 },
+  exit:    { opacity: 0, y: -5 },
 };
 
 export default function PageLayout({ title, subtitle, actions, action, children }) {
   const headerActions = actions || action;
 
   return (
-    <div className="flex h-dvh bg-background overflow-hidden">
+    <div className="flex flex-col bg-[#0a0a0a] overflow-hidden" style={{ height: '100dvh' }}>
       {/* Sidebar — desktop only */}
       <Sidebar />
 
-      {/* Main column */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      {/* Main content column */}
+      <div className="flex flex-col flex-1 min-h-0">
         <Header title={title} subtitle={subtitle} actions={headerActions} />
 
         <main
-          className="flex-1 overflow-y-auto scroll-smooth-ios"
+          className="flex-1 overflow-y-auto"
+          style={{
+            overscrollBehavior: 'contain',
+            WebkitOverflowScrolling: 'touch',
+          }}
         >
           <motion.div
             variants={pageVariants}
             initial="initial"
             animate="animate"
             exit="exit"
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            /* pb-28 on mobile: 56px nav + ~16px gap + safe-area */
-            className="p-4 lg:p-6 max-w-7xl mx-auto w-full"
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="p-4 max-w-2xl mx-auto w-full"
             style={{
+              /* Bottom padding: 56px nav + safe-area + 16px breathing room */
               paddingBottom: 'calc(env(safe-area-inset-bottom) + 80px)',
             }}
           >
@@ -41,7 +45,7 @@ export default function PageLayout({ title, subtitle, actions, action, children 
         </main>
       </div>
 
-      {/* Bottom nav — mobile only (hidden on lg+) */}
+      {/* Bottom nav — mobile only */}
       <BottomNav />
     </div>
   );

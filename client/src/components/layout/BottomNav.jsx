@@ -11,18 +11,19 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import { ROUTES } from '@/constants/index.js';
 import toast from 'react-hot-toast';
 
+// Order: Dashboard → Analytics → Expenses → Budget → More
 const PRIMARY_TABS = [
   { icon: LayoutDashboard, label: 'Dashboard', to: ROUTES.DASHBOARD },
+  { icon: BarChart3,       label: 'Analytics', to: ROUTES.ANALYTICS },
   { icon: Wallet,          label: 'Expenses',  to: ROUTES.EXPENSES  },
-  { icon: Target,          label: 'Goals',     to: ROUTES.GOALS     },
-  { icon: Flame,           label: 'Habits',    to: ROUTES.HABITS    },
+  { icon: PieChart,        label: 'Budget',    to: ROUTES.BUDGET    },
 ];
 
 const MORE_ITEMS = [
-  { icon: BarChart3,  label: 'Analytics', to: ROUTES.ANALYTICS  },
-  { icon: PieChart,   label: 'Budget',    to: ROUTES.BUDGET     },
-  { icon: Code2,      label: 'Placement', to: ROUTES.PLACEMENT  },
-  { icon: StickyNote, label: 'Notes',     to: ROUTES.NOTES      },
+  { icon: Target,     label: 'Goals',     to: ROUTES.GOALS     },
+  { icon: Flame,      label: 'Habits',    to: ROUTES.HABITS    },
+  { icon: Code2,      label: 'Placement', to: ROUTES.PLACEMENT },
+  { icon: StickyNote, label: 'Notes',     to: ROUTES.NOTES     },
 ];
 
 export default function BottomNav() {
@@ -39,38 +40,41 @@ export default function BottomNav() {
 
   return (
     <>
-      {/* Bottom Tab Bar */}
+      {/* Bottom Tab Bar — iPhone 14 Pro optimized */}
       <nav
         className="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
         style={{
-          background: '#171717',
-          borderTop: '1px solid #262626',
+          background: 'rgba(10,10,10,0.95)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderTop: '1px solid #1f1f1f',
           paddingBottom: 'env(safe-area-inset-bottom)',
         }}
       >
-        <div className="flex items-stretch">
+        <div className="flex items-stretch h-[56px]">
           {PRIMARY_TABS.map(({ icon: Icon, label, to }) => (
             <NavLink
               key={to}
               to={to}
               className={({ isActive }) =>
                 cn(
-                  'flex-1 flex flex-col items-center justify-center gap-[3px] py-2 min-h-[56px] transition-colors duration-150 relative touch-manipulation',
-                  isActive ? 'text-[#059669]' : 'text-[#525252]',
+                  'flex-1 flex flex-col items-center justify-center gap-[3px] transition-colors duration-150 relative touch-manipulation select-none',
+                  isActive ? 'text-[#059669]' : 'text-[#4a4a4a]',
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  {/* Active indicator dot */}
-                  <span
-                    className={cn(
-                      'absolute top-1.5 w-1 h-1 rounded-full transition-all duration-200',
-                      isActive ? 'bg-[#059669] opacity-100' : 'opacity-0',
-                    )}
-                  />
-                  <Icon size={24} strokeWidth={isActive ? 2.2 : 1.8} />
-                  <span className="text-[10px] font-medium leading-none">{label}</span>
+                  {/* Active indicator pill */}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active-pill"
+                      className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] rounded-full bg-[#059669]"
+                      transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+                    />
+                  )}
+                  <Icon size={22} strokeWidth={isActive ? 2.2 : 1.7} />
+                  <span className="text-[9px] font-semibold leading-none tracking-tight">{label}</span>
                 </>
               )}
             </NavLink>
@@ -80,18 +84,17 @@ export default function BottomNav() {
           <button
             onClick={() => setMoreOpen(true)}
             className={cn(
-              'flex-1 flex flex-col items-center justify-center gap-[3px] py-2 min-h-[56px] transition-colors duration-150 touch-manipulation relative',
-              moreOpen ? 'text-[#059669]' : 'text-[#525252]',
+              'flex-1 flex flex-col items-center justify-center gap-[3px] transition-colors duration-150 touch-manipulation relative select-none',
+              moreOpen ? 'text-[#059669]' : 'text-[#4a4a4a]',
             )}
           >
-            <span
-              className={cn(
-                'absolute top-1.5 w-1 h-1 rounded-full transition-all duration-200',
-                moreOpen ? 'bg-[#059669] opacity-100' : 'opacity-0',
-              )}
-            />
-            <Grid3X3 size={24} strokeWidth={moreOpen ? 2.2 : 1.8} />
-            <span className="text-[10px] font-medium leading-none">More</span>
+            {moreOpen && (
+              <motion.span
+                className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] rounded-full bg-[#059669]"
+              />
+            )}
+            <Grid3X3 size={22} strokeWidth={moreOpen ? 2.2 : 1.7} />
+            <span className="text-[9px] font-semibold leading-none tracking-tight">More</span>
           </button>
         </div>
       </nav>
@@ -106,8 +109,9 @@ export default function BottomNav() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              transition={{ duration: 0.18 }}
+              className="fixed inset-0 z-50 bg-black/70 lg:hidden"
+              style={{ backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
               onClick={() => setMoreOpen(false)}
             />
 
@@ -117,32 +121,32 @@ export default function BottomNav() {
               initial={{ y: '100%' }}
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
-              transition={{ type: 'spring', damping: 32, stiffness: 320 }}
-              className="fixed left-0 right-0 bottom-0 z-50 lg:hidden rounded-t-2xl overflow-hidden"
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="fixed left-0 right-0 bottom-0 z-50 lg:hidden rounded-t-3xl overflow-hidden"
               style={{
-                background: '#171717',
-                borderTop: '1px solid #262626',
-                paddingBottom: 'calc(env(safe-area-inset-bottom) + 16px)',
+                background: '#111111',
+                borderTop: '1px solid #222222',
+                paddingBottom: 'calc(env(safe-area-inset-bottom) + 20px)',
               }}
             >
               {/* Handle */}
-              <div className="flex justify-center pt-3 pb-1">
-                <div className="w-10 h-1 rounded-full bg-[#404040]" />
+              <div className="flex justify-center pt-3 pb-2">
+                <div className="w-9 h-1 rounded-full bg-[#333333]" />
               </div>
 
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3">
-                <span className="text-sm font-semibold text-[#fafafa]">More</span>
+              <div className="flex items-center justify-between px-5 py-2">
+                <span className="text-sm font-bold text-white tracking-tight">More</span>
                 <button
                   onClick={() => setMoreOpen(false)}
-                  className="p-1.5 rounded-lg text-[#525252] hover:text-[#fafafa] hover:bg-[#262626] transition-colors touch-manipulation"
+                  className="p-2 rounded-xl text-[#555] hover:text-white hover:bg-[#222] transition-colors touch-manipulation"
                 >
-                  <X size={18} />
+                  <X size={17} />
                 </button>
               </div>
 
               {/* Nav Items */}
-              <div className="px-3 space-y-0.5">
+              <div className="px-3 mt-1 space-y-1">
                 {MORE_ITEMS.map(({ icon: Icon, label, to }) => (
                   <NavLink
                     key={to}
@@ -150,18 +154,18 @@ export default function BottomNav() {
                     onClick={() => setMoreOpen(false)}
                     className={({ isActive }) =>
                       cn(
-                        'flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-150 min-h-[56px] touch-manipulation',
+                        'flex items-center gap-3 px-4 py-3.5 rounded-2xl transition-all duration-150 min-h-[52px] touch-manipulation',
                         isActive
                           ? 'bg-[#059669]/10 text-[#059669] border border-[#059669]/20'
-                          : 'text-[#a3a3a3] hover:text-[#fafafa] hover:bg-[#262626]',
+                          : 'text-[#888] hover:text-white hover:bg-[#1a1a1a]',
                       )
                     }
                   >
                     {({ isActive }) => (
                       <>
-                        <Icon size={20} strokeWidth={isActive ? 2.2 : 1.8} className="flex-shrink-0" />
-                        <span className="flex-1 text-sm font-medium">{label}</span>
-                        <ChevronRight size={16} className="text-[#404040]" />
+                        <Icon size={20} strokeWidth={isActive ? 2.2 : 1.7} className="flex-shrink-0" />
+                        <span className="flex-1 text-sm font-semibold">{label}</span>
+                        <ChevronRight size={15} className="text-[#333]" />
                       </>
                     )}
                   </NavLink>
@@ -169,16 +173,16 @@ export default function BottomNav() {
               </div>
 
               {/* Divider */}
-              <div className="mx-4 my-3 h-px bg-[#262626]" />
+              <div className="mx-5 my-3 h-px bg-[#1f1f1f]" />
 
               {/* Logout */}
               <div className="px-3">
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl min-h-[56px] text-[#ef4444] hover:bg-[#ef4444]/5 transition-all duration-150 touch-manipulation"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl min-h-[52px] text-[#ef4444] hover:bg-[#ef4444]/8 transition-all duration-150 touch-manipulation"
                 >
                   <LogOut size={20} className="flex-shrink-0" />
-                  <span className="text-sm font-medium">Logout</span>
+                  <span className="text-sm font-semibold">Logout</span>
                 </button>
               </div>
             </motion.div>

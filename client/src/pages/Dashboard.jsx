@@ -133,7 +133,7 @@ export default function Dashboard() {
       <div className="space-y-4">
 
         {/* ── Time range filter — top of content, full width on mobile ── */}
-        <TimeRangeFilter onChange={setDateRange} defaultRange="monthly" />
+        <TimeRangeFilter onChange={setDateRange} defaultRange="yearly" />
 
         {/* ── Stat cards ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
