@@ -1,4 +1,10 @@
 // app.config.js
+// ─── PRODUCTION API URL ────────────────────────────────────────────────────────
+// Once your Render backend is live, replace the URL below with your actual
+// Render service URL (e.g. https://expense-tracker-api.onrender.com/api/v1)
+// This is what your iPhone uses via Expo Go when your laptop is OFF.
+const PROD_API_URL = 'https://personal-os-c6lc.onrender.com/api/v1';
+
 export default {
   expo: {
     name: 'Personal OS',
@@ -25,11 +31,11 @@ export default {
     },
     plugins: ['expo-secure-store'],
     extra: {
-      // Override by setting EXPO_PUBLIC_API_URL in your environment
+      // Priority: env var (local dev LAN IP) → hardcoded production URL
       // For local dev on iPhone via Expo Go, use your machine's LAN IP:
-      //   e.g. EXPO_PUBLIC_API_URL=http://192.168.x.x:8000/api/v1 npx expo start
-      // For production, point to your Render URL.
-      apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000/api/v1',
+      //   EXPO_PUBLIC_API_URL=http://192.168.x.x:8000/api/v1 npx expo start
+      // When laptop is OFF, app falls back to PROD_API_URL automatically.
+      apiUrl: process.env.EXPO_PUBLIC_API_URL || PROD_API_URL,
     },
   },
 };
