@@ -58,3 +58,6 @@ coverage/
 .turbo/
 .nyc_output/
 *.tgz
+HOSTING.md
+
+# Local hosting notes (may contain secrets)
