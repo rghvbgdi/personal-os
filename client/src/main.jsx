@@ -30,7 +30,7 @@ createRoot(document.getElementById('root')).render(
               <SidebarProvider>
                 <App />
                 <Toaster
-                  position="bottom-right"
+                  position="top-center"
                   toastOptions={{
                     style: {
                       background: '#171717',

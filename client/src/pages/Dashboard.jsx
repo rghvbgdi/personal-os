@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import PageLayout from '@/components/layout/PageLayout.jsx';
 import { SkeletonCard, SkeletonTable } from '@/components/ui/Skeleton.jsx';
 import { expensesApi } from '@/api/expenses.api.js';
-import { goalApi, habitApi } from '@/api/index.js';
+import { goalApi } from '@/api/index.js';
 import TimeRangeFilter from '@/components/ui/TimeRangeFilter.jsx';
 import { formatCurrency, formatDate, changePercent } from '@/utils/formatters.js';
 import { CATEGORIES, QUERY_KEYS } from '@/constants/index.js';
@@ -35,16 +35,16 @@ function StatCard({ title, value, subtitle, trend, icon: Icon, color = 'text-acc
       {/* glow orb */}
       <div className={cn('absolute -top-4 -right-4 h-16 w-16 rounded-full opacity-10 blur-2xl group-hover:opacity-20 transition-opacity', color.replace('text-', 'bg-'))} />
       <div className="flex items-center justify-between">
-        <span className="text-[11px] font-semibold text-text-muted uppercase tracking-widest">{title}</span>
-        <div className={cn('h-8 w-8 rounded-xl flex items-center justify-center bg-surface-2 border border-border', color)}>
+        <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest leading-tight">{title}</span>
+        <div className={cn('h-8 w-8 rounded-xl flex items-center justify-center bg-surface-2 border border-border flex-shrink-0', color)}>
           <Icon className="h-4 w-4" />
         </div>
       </div>
-      <p className={cn('text-2xl font-bold', color)}>{value}</p>
-      {subtitle && <p className="text-xs text-text-secondary">{subtitle}</p>}
+      <p className={cn('text-xl font-bold leading-tight', color)}>{value}</p>
+      {subtitle && <p className="text-[10px] text-text-secondary leading-tight">{subtitle}</p>}
       {trend !== undefined && trend !== null && (
-        <div className={cn('flex items-center gap-1 text-xs font-medium', isPositive ? 'text-danger' : 'text-accent')}>
-          {isPositive ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+        <div className={cn('flex items-center gap-1 text-[10px] font-medium', isPositive ? 'text-danger' : 'text-accent')}>
+          {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
           <span>{Math.abs(trend)}% vs last period</span>
         </div>
       )}
@@ -95,7 +95,7 @@ export default function Dashboard() {
   const totalExpense  = trendData?.summary?.find((s) => s._id === 'expense')?.total    || dashData?.currentMonth?.expense?.total    || 0;
   const totalIncome   = trendData?.summary?.find((s) => s._id === 'income')?.total     || dashData?.currentMonth?.income?.total     || 0;
   const totalInvested = trendData?.summary?.find((s) => s._id === 'investment')?.total || dashData?.currentMonth?.investment?.total || 0;
-  const savings       = totalIncome - totalExpense;                // money not spent (incl investments)
+  const savings       = totalIncome - totalExpense;
   const netCashFlow   = totalIncome - totalExpense - totalInvested;
   const savingsRate   = totalIncome > 0 ? Math.round((savings / totalIncome) * 100) : 0;
 
@@ -107,7 +107,6 @@ export default function Dashboard() {
     return { name: cat?.label || c._id, value: c.total, color: cat?.color || '#6b7280' };
   });
 
-  // X-axis label: YYYY-MM-DD → "Jun 1", YYYY-MM → "Jan", else keep
   const chartData = useMemo(() => {
     if (!trendData?.trend) return [];
     const merged = {};
@@ -124,15 +123,17 @@ export default function Dashboard() {
 
   const xAxisProps = dateRange.timeRange === 'monthly'
     ? { tick: { fontSize: 9, fill: '#6b7280' }, angle: -45, textAnchor: 'end', height: 40, interval: 0 }
-    : { tick: { fontSize: 11, fill: '#6b7280' }, interval: 'preserveStartEnd' };
+    : { tick: { fontSize: 10, fill: '#6b7280' }, interval: 'preserveStartEnd' };
 
   return (
     <PageLayout
       title={`Good ${now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening'}, ${user?.name?.split(' ')[0] || ''} 👋`}
       subtitle={format(now, 'EEEE, MMMM d')}
-      actions={<TimeRangeFilter onChange={setDateRange} defaultRange="monthly" />}
     >
-      <div className="space-y-5">
+      <div className="space-y-4">
+
+        {/* ── Time range filter — top of content, full width on mobile ── */}
+        <TimeRangeFilter onChange={setDateRange} defaultRange="monthly" />
 
         {/* ── Stat cards ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -161,7 +162,7 @@ export default function Dashboard() {
                 index={2}
                 title="Savings"
                 value={formatCurrency(Math.max(0, savings))}
-                subtitle={`${savingsRate >= 0 ? savingsRate : 0}% of income · ${periodLabel}`}
+                subtitle={`${savingsRate >= 0 ? savingsRate : 0}% of income`}
                 icon={PiggyBank}
                 color={savings >= 0 ? 'text-accent' : 'text-danger'}
               />
@@ -169,7 +170,7 @@ export default function Dashboard() {
                 index={3}
                 title="Net Cash Flow"
                 value={formatCurrency(netCashFlow)}
-                subtitle={`Invested: ${formatCurrency(totalInvested)} · ${periodLabel}`}
+                subtitle={`Invested: ${formatCurrency(totalInvested)}`}
                 icon={netCashFlow >= 0 ? TrendingUp : TrendingDown}
                 color={netCashFlow >= 0 ? 'text-accent' : 'text-danger'}
               />
@@ -177,11 +178,11 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* ── Trend chart + Top categories ── */}
+        {/* ── Trend chart + Top categories (stacked on mobile) ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="lg:col-span-2 rounded-2xl bg-surface border border-border p-5 shadow-card">
-            <div className="flex items-center justify-between mb-4">
+            className="lg:col-span-2 rounded-2xl bg-surface border border-border p-4 shadow-card">
+            <div className="flex items-center justify-between mb-3">
               <div>
                 <h3 className="text-sm font-semibold text-text-primary">Spending Overview</h3>
                 <p className="text-xs text-text-muted mt-0.5">Income vs Expenses · {periodLabel}</p>
@@ -192,12 +193,12 @@ export default function Dashboard() {
               </div>
             </div>
             {trendLoading ? (
-              <div className="h-48 bg-surface-2 rounded-xl animate-pulse" />
+              <div className="h-40 bg-surface-2 rounded-xl animate-pulse" />
             ) : chartData.length === 0 ? (
-              <div className="h-48 flex items-center justify-center text-text-muted text-sm">No data for {periodLabel}</div>
+              <div className="h-40 flex items-center justify-center text-text-muted text-sm">No data for {periodLabel}</div>
             ) : (
-              <ResponsiveContainer width="100%" height={200}>
-                <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+              <ResponsiveContainer width="100%" height={160}>
+                <AreaChart data={chartData} margin={{ top: 0, right: 0, left: -30, bottom: 0 }}>
                   <defs>
                     <linearGradient id="expGrad2" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15} />
@@ -209,7 +210,15 @@ export default function Dashboard() {
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="period" {...xAxisProps} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: '#525252' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+                  {/* Hide YAxis on mobile — saves ~40px horizontal space */}
+                  <YAxis
+                    className="hidden sm:block"
+                    tick={{ fontSize: 10, fill: '#525252' }}
+                    axisLine={false}
+                    tickLine={false}
+                    tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
+                    width={0}
+                  />
                   <Tooltip content={<ChartTooltip />} />
                   <Area type="monotone" dataKey="income" name="Income" stroke="#059669" strokeWidth={1.5} fill="url(#incGrad2)" dot={false} />
                   <Area type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" strokeWidth={1.5} fill="url(#expGrad2)" dot={false} />
@@ -220,8 +229,8 @@ export default function Dashboard() {
 
           {/* Top categories pie */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-            className="rounded-2xl bg-surface border border-border p-5 shadow-card">
-            <h3 className="text-sm font-semibold text-text-primary mb-4">Top Spend Categories</h3>
+            className="rounded-2xl bg-surface border border-border p-4 shadow-card">
+            <h3 className="text-sm font-semibold text-text-primary mb-3">Top Spend Categories</h3>
             {topCategories.length > 0 ? (
               <>
                 <ResponsiveContainer width="100%" height={120}>
@@ -253,7 +262,7 @@ export default function Dashboard() {
         {/* ── Savings snapshot ── */}
         {!dashLoading && totalIncome > 0 && (
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}
-            className="rounded-2xl bg-surface border border-border p-5 shadow-card">
+            className="rounded-2xl bg-surface border border-border p-4 shadow-card">
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h3 className="text-sm font-semibold text-text-primary">Savings Breakdown</h3>
@@ -276,7 +285,7 @@ export default function Dashboard() {
             </div>
             <div className="flex justify-between text-xs text-text-muted">
               <span>Spent {formatCurrency(totalExpense)} ({totalIncome > 0 ? Math.round((totalExpense / totalIncome) * 100) : 0}%)</span>
-              <span>Saved {formatCurrency(Math.max(0, savings))} ({savingsRate >= 0 ? savingsRate : 0}%)</span>
+              <span>Saved {savingsRate >= 0 ? savingsRate : 0}%</span>
             </div>
             {totalInvested > 0 && (
               <p className="text-xs text-text-muted mt-1.5">
@@ -289,19 +298,19 @@ export default function Dashboard() {
 
         {/* ── Recent transactions ── */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-          className="rounded-2xl bg-surface border border-border p-5 shadow-card">
+          className="rounded-2xl bg-surface border border-border p-4 shadow-card">
           <h3 className="text-sm font-semibold text-text-primary mb-4">Recent Transactions</h3>
           {dashLoading ? <SkeletonTable rows={5} /> : (dashData?.recentExpenses?.length > 0) ? (
             <div className="space-y-1">
               {dashData.recentExpenses.map((exp) => {
                 const cat = CATEGORIES.find((c) => c.value === exp.category);
                 return (
-                  <div key={exp._id} className="flex items-center gap-3 px-2 py-2.5 rounded-xl hover:bg-surface-2 transition-colors">
-                    <div className="h-9 w-9 rounded-xl flex items-center justify-center text-base flex-shrink-0 bg-surface-2 border border-border">
+                  <div key={exp._id} className="flex items-center gap-3 px-2 py-3 rounded-xl hover:bg-surface-2 transition-colors">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center text-base flex-shrink-0 bg-surface-2 border border-border">
                       {cat?.icon || '📦'}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-text-primary truncate">{exp.title}</p>
+                      <p className="text-sm font-semibold text-text-primary truncate">{exp.title}</p>
                       <p className="text-xs text-text-muted">{formatDate(exp.date, 'MMM d, yyyy')} · {cat?.label || exp.category}</p>
                     </div>
                     <span className={cn('text-sm font-bold flex-shrink-0',

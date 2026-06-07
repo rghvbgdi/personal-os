@@ -1,28 +1,49 @@
-import { Menu, Bell } from 'lucide-react';
+import { Menu, Zap } from 'lucide-react';
 import { useSidebar } from '@/context/SidebarContext.jsx';
-import { useAuth } from '@/context/AuthContext.jsx';
-import Button from '@/components/ui/Button.jsx';
 
 export default function Header({ title, subtitle, actions }) {
   const { toggle } = useSidebar();
-  const { user } = useAuth();
 
   return (
-    <header className="h-14 flex items-center justify-between px-4 lg:px-6 border-b border-border bg-background sticky top-0 z-30">
-      <div className="flex items-center gap-3">
-        <button
-          onClick={toggle}
-          className="lg:hidden p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-2 transition-colors"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
-        <div>
-          {title && <h1 className="text-sm font-semibold text-text-primary leading-tight">{title}</h1>}
-          {subtitle && <p className="text-xs text-text-muted">{subtitle}</p>}
+    <header
+      className="sticky top-0 z-30 flex flex-col bg-background/90 backdrop-blur-xl border-b border-border"
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
+    >
+      <div className="h-14 lg:h-16 flex items-center justify-between px-4 lg:px-6">
+        {/* Left side */}
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Hamburger — desktop only, for sidebar toggle */}
+          <button
+            onClick={toggle}
+            className="hidden lg:flex p-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-2 transition-colors touch-manipulation"
+            aria-label="Toggle sidebar"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
+          {/* Mobile branding logo — only shown on mobile since sidebar is hidden */}
+          <div className="flex lg:hidden h-7 w-7 rounded-xl bg-accent items-center justify-center flex-shrink-0 shadow-glow-sm">
+            <Zap className="h-3.5 w-3.5 text-white" />
+          </div>
+
+          <div className="min-w-0">
+            {title && (
+              <h1 className="text-base font-bold text-text-primary leading-tight truncate">
+                {title}
+              </h1>
+            )}
+            {subtitle && (
+              <p className="text-xs text-text-muted leading-none mt-0.5 truncate">{subtitle}</p>
+            )}
+          </div>
         </div>
-      </div>
-      <div className="flex items-center gap-2">
-        {actions}
+
+        {/* Right side — action buttons */}
+        {actions && (
+          <div className="flex items-center gap-2 flex-shrink-0 ml-3">
+            {actions}
+          </div>
+        )}
       </div>
     </header>
   );

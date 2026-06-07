@@ -11,10 +11,10 @@ const variants = {
 };
 
 const sizes = {
-  sm: 'h-8 px-3 text-sm gap-1.5',
-  md: 'h-9 px-4 text-sm gap-2',
-  lg: 'h-11 px-6 text-base gap-2',
-  icon: 'h-9 w-9',
+  sm: 'min-h-[36px] px-3 text-xs font-semibold gap-1.5',
+  md: 'min-h-[44px] px-5 py-3 text-sm font-semibold gap-2',
+  lg: 'min-h-[50px] px-6 py-3 text-base font-semibold gap-2',
+  icon: 'h-11 w-11',
 };
 
 const Button = forwardRef(({
@@ -25,7 +25,7 @@ const Button = forwardRef(({
     ref={ref}
     disabled={disabled || loading}
     className={cn(
-      'inline-flex items-center justify-center rounded-lg font-medium transition-all duration-150',
+      'inline-flex items-center justify-center rounded-xl font-semibold transition-all duration-150',
       'focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       variants[variant],

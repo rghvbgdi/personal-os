@@ -4,6 +4,13 @@ export default {
   darkMode: 'class',
   theme: {
     extend: {
+      height: {
+        dvh: '100dvh',
+        'dvh-screen': '100dvh',
+      },
+      minHeight: {
+        dvh: '100dvh',
+      },
       colors: {
         background: '#0a0a0a',
         surface: '#171717',
@@ -56,5 +63,16 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // scrollbar-hide utility for overflow-x scroll containers
+    function ({ addUtilities }) {
+      addUtilities({
+        '.scrollbar-hide': {
+          '-ms-overflow-style': 'none',
+          'scrollbar-width': 'none',
+          '&::-webkit-scrollbar': { display: 'none' },
+        },
+      });
+    },
+  ],
 };
