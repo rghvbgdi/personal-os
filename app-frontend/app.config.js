@@ -34,6 +34,9 @@ export default {
       //   EXPO_PUBLIC_API_URL=http://192.168.x.x:8000/api/v1 npx expo start
       // When laptop is OFF, app falls back to PROD_API_URL automatically.
       apiUrl: process.env.EXPO_PUBLIC_API_URL || PROD_API_URL,
+      eas: {
+        projectId: '5c2ae4b2-300a-45eb-adf6-4c8ae5926d6f',
+      },
     },
   },
 };
