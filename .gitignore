@@ -59,5 +59,6 @@ coverage/
 .nyc_output/
 *.tgz
 HOSTING.md
+*.md
 
-# Local hosting notes (may contain secrets)
+# Local hosting notes and docs (may contain secrets)
