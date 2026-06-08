@@ -10,6 +10,7 @@ import { PomodoroProvider } from './context/PomodoroContext.jsx';
 import App from './App.jsx';
 import './index.css';
 
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

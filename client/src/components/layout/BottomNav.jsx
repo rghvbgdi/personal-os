@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Wallet, Target, Flame, Grid3X3,
   BarChart3, PieChart, Code2, StickyNote, Timer,
-  LogOut, ChevronRight, X,
+  LogOut, ChevronRight, X, CheckSquare,
 } from 'lucide-react';
 import { cn } from '@/utils/cn.js';
 import { useAuth } from '@/context/AuthContext.jsx';
@@ -20,10 +20,11 @@ const PRIMARY_TABS = [
 ];
 
 const MORE_ITEMS = [
-  { icon: Target,     label: 'Goals',     to: ROUTES.GOALS     },
-  { icon: Flame,      label: 'Habits',    to: ROUTES.HABITS    },
-  { icon: Code2,      label: 'Placement', to: ROUTES.PLACEMENT },
-  { icon: StickyNote, label: 'Notes',     to: ROUTES.NOTES     },
+  { icon: CheckSquare, label: 'Todo & Work', to: ROUTES.TODO_TODAY },
+  { icon: Target,      label: 'Goals',       to: ROUTES.GOALS     },
+  { icon: Flame,       label: 'Habits',      to: ROUTES.HABITS    },
+  { icon: Code2,       label: 'Placement',   to: ROUTES.PLACEMENT },
+  { icon: StickyNote,  label: 'Notes',       to: ROUTES.NOTES     },
 ];
 
 export default function BottomNav() {

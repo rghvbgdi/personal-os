@@ -71,6 +71,66 @@ export const MASTERY_LEVELS = [
   { value: 'mastered', label: 'Mastered', color: '#059669' },
 ];
 
+// ── Todo Module Constants ──────────────────────────────────────────────────────
+export const TASK_PRIORITIES = [
+  { value: 'p1', label: 'P1 — Critical', color: '#ef4444', dot: '#ef4444' },
+  { value: 'p2', label: 'P2 — High',     color: '#f59e0b', dot: '#f59e0b' },
+  { value: 'p3', label: 'P3 — Normal',   color: '#6c63ff', dot: '#6c63ff' },
+  { value: 'p4', label: 'P4 — Low',      color: '#6b7280', dot: '#6b7280' },
+];
+
+export const TASK_STATUSES = [
+  { value: 'todo',       label: 'To Do',       color: '#6b7280' },
+  { value: 'inprogress', label: 'In Progress',  color: '#6c63ff' },
+  { value: 'blocked',    label: 'Blocked',      color: '#ef4444' },
+  { value: 'done',       label: 'Done',         color: '#22c55e' },
+];
+
+export const WORK_CATEGORIES = [
+  { value: 'code-review',    label: 'Code Review',    icon: '🔍' },
+  { value: 'feature',        label: 'Feature',        icon: '✨' },
+  { value: 'bug-fix',        label: 'Bug Fix',        icon: '🐛' },
+  { value: 'meeting-prep',   label: 'Meeting Prep',   icon: '📋' },
+  { value: 'documentation',  label: 'Documentation',  icon: '📝' },
+  { value: 'learning',       label: 'Learning',       icon: '📚' },
+  { value: 'admin',          label: 'Admin',          icon: '🗂️' },
+  { value: 'other',          label: 'Other',          icon: '📦' },
+];
+
+export const STUDENT_CATEGORIES = [
+  { value: 'assignment',  label: 'Assignment',  icon: '📄' },
+  { value: 'revision',    label: 'Revision',    icon: '🔄' },
+  { value: 'practice',    label: 'Practice',    icon: '💪' },
+  { value: 'reading',     label: 'Reading',     icon: '📖' },
+  { value: 'other',       label: 'Other',       icon: '📦' },
+];
+
+export const EFFORT_OPTIONS = [
+  { value: '30min',     label: '30 min' },
+  { value: '1hr',       label: '1 hr' },
+  { value: '2hr',       label: '2 hrs' },
+  { value: 'half-day',  label: 'Half day' },
+  { value: 'full-day',  label: 'Full day' },
+];
+
+export const EVENT_TYPES = [
+  { value: 'standup',   label: 'Standup',        icon: '🔄', color: '#6c63ff' },
+  { value: '1on1',      label: '1:1',            icon: '👥', color: '#6c63ff' },
+  { value: 'meeting',   label: 'Meeting',        icon: '📅', color: '#6c63ff' },
+  { value: 'call',      label: 'Client Call',    icon: '📞', color: '#6c63ff' },
+  { value: 'deadline',  label: 'Deadline',       icon: '🔴', color: '#ef4444' },
+  { value: 'personal',  label: 'Personal',       icon: '👤', color: '#22c55e' },
+  { value: 'other',     label: 'Other',          icon: '📦', color: '#6b7280' },
+];
+
+export const SLEEP_QUALITY = [
+  { value: 1, emoji: '😴', label: 'Terrible' },
+  { value: 2, emoji: '😞', label: 'Poor' },
+  { value: 3, emoji: '😐', label: 'Okay' },
+  { value: 4, emoji: '😊', label: 'Good' },
+  { value: 5, emoji: '🌟', label: 'Amazing' },
+];
+
 export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
@@ -83,6 +143,13 @@ export const ROUTES = {
   NOTES: '/notes',
   HABITS: '/habits',
   BUDGET: '/budget',
+  // ── Todo Module ──
+  TODO: '/todo',
+  TODO_TODAY: '/todo/today',
+  TODO_TASKS: '/todo/tasks',
+  TODO_CALENDAR: '/todo/calendar',
+  TODO_SLEEP: '/todo/sleep',
+  TODO_FOCUS: '/todo/focus',
 };
 
 export const QUERY_KEYS = {
@@ -101,4 +168,13 @@ export const QUERY_KEYS = {
   HABITS: ['habits'],
   POMODORO_STATS: ['pomodoro', 'stats'],
   POMODORO_SESSIONS: ['pomodoro', 'sessions'],
+  // ── Todo Module ──
+  TASKS: ['tasks'],
+  TASKS_TODAY: ['tasks', 'today'],
+  EVENTS: ['events'],
+  SLEEP: ['sleep'],
+  SLEEP_INSIGHTS: ['sleep', 'insights'],
+  REVIEW: ['review'],
+  INTERNSHIP: ['internship'],
+  TODO_DASHBOARD: ['todo', 'dashboard'],
 };

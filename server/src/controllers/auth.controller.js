@@ -26,7 +26,8 @@ export const register = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
-    return success(res, { user: user.toSafeObject(), accessToken }, 'Account created', 201);
+    // Also send in body so PWA can persist in localStorage
+    return success(res, { user: user.toSafeObject(), accessToken, refreshToken }, 'Account created', 201);
   } catch (err) {
     next(err);
   }
@@ -48,7 +49,8 @@ export const login = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     res.cookie('refreshToken', refreshToken, REFRESH_COOKIE_OPTIONS);
-    return success(res, { user: user.toSafeObject(), accessToken }, 'Logged in');
+    // Also send in body so PWA can persist in localStorage
+    return success(res, { user: user.toSafeObject(), accessToken, refreshToken }, 'Logged in');
   } catch (err) {
     next(err);
   }
@@ -56,7 +58,8 @@ export const login = async (req, res, next) => {
 
 export const refresh = async (req, res, next) => {
   try {
-    const token = req.cookies.refreshToken;
+    // Accept refresh token from cookie OR request body (for PWA localStorage approach)
+    const token = req.cookies.refreshToken || req.body?.refreshToken;
     if (!token) return error(res, 'Refresh token required', 401);
 
     let decoded;
@@ -78,7 +81,7 @@ export const refresh = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     res.cookie('refreshToken', newRefreshToken, REFRESH_COOKIE_OPTIONS);
-    return success(res, { accessToken }, 'Token refreshed');
+    return success(res, { accessToken, refreshToken: newRefreshToken }, 'Token refreshed');
   } catch (err) {
     next(err);
   }

@@ -42,11 +42,13 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        const storedRefreshToken = localStorage.getItem('refreshToken');
         const { data } = await axios.post(
           `${import.meta.env.VITE_API_URL || '/api/v1'}/auth/refresh`,
-          {},
+          storedRefreshToken ? { refreshToken: storedRefreshToken } : {},
           { withCredentials: true }
         );
+        if (data.data.refreshToken) localStorage.setItem('refreshToken', data.data.refreshToken);
         const newToken = data.data.accessToken;
         localStorage.setItem('accessToken', newToken);
         processQueue(null, newToken);

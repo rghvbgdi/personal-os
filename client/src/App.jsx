@@ -5,6 +5,7 @@ import CommandPalette from './components/CommandPalette.jsx';
 import PomodoroTimer from './components/PomodoroTimer.jsx';
 import Login from './pages/auth/Login.jsx';
 import Register from './pages/auth/Register.jsx';
+import Home from './pages/Home.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Expenses from './pages/Expenses.jsx';
 import Analytics from './pages/Analytics.jsx';
@@ -14,18 +15,20 @@ import Placement from './pages/Placement.jsx';
 import Notes from './pages/Notes.jsx';
 import Habits from './pages/Habits.jsx';
 import NotFound from './pages/NotFound.jsx';
+// ── Todo Module ──
+import TodoModule from './pages/todo/TodoModule.jsx';
 import { ROUTES } from './constants/index.js';
 
 export default function App() {
   return (
     <>
-      {/* Global overlays — always mounted for Cmd+K and pomodoro */}
+      {/* Global overlays */}
       <CommandPalette />
       <PomodoroTimer />
 
       <AnimatePresence mode="wait">
         <Routes>
-          <Route path={ROUTES.HOME} element={<Navigate to={ROUTES.DASHBOARD} replace />} />
+          <Route path={ROUTES.HOME} element={<ProtectedRoute><Home /></ProtectedRoute>} />
           <Route path={ROUTES.LOGIN} element={<Login />} />
           <Route path={ROUTES.REGISTER} element={<Register />} />
           <Route path={ROUTES.DASHBOARD} element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
@@ -36,6 +39,8 @@ export default function App() {
           <Route path={ROUTES.PLACEMENT} element={<ProtectedRoute><Placement /></ProtectedRoute>} />
           <Route path={ROUTES.NOTES} element={<ProtectedRoute><Notes /></ProtectedRoute>} />
           <Route path={ROUTES.HABITS} element={<ProtectedRoute><Habits /></ProtectedRoute>} />
+          {/* Todo module — handles /todo/* sub-routes internally */}
+          <Route path="/todo/*" element={<ProtectedRoute><TodoModule /></ProtectedRoute>} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AnimatePresence>

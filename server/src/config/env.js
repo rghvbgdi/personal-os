@@ -17,9 +17,10 @@ export const env = {
   JWT_REFRESH_SECRET:  required('JWT_REFRESH_SECRET'),
   JWT_ACCESS_EXPIRES:  optional('JWT_ACCESS_EXPIRES', '15m'),
   JWT_REFRESH_EXPIRES: optional('JWT_REFRESH_EXPIRES', '7d'),
-  // Comma-separated list of allowed origins: e.g.
-  //   "https://my-app.vercel.app,https://my-app-git-main.vercel.app"
-  // In development this is unused (all origins allowed).
   CLIENT_URL:          optional('CLIENT_URL', 'http://localhost:5173'),
   BCRYPT_ROUNDS:       parseInt(optional('BCRYPT_ROUNDS', '12'), 10),
+  // ── Web Push (VAPID) ──
+  VAPID_PUBLIC_KEY:    optional('VAPID_PUBLIC_KEY', ''),
+  VAPID_PRIVATE_KEY:   optional('VAPID_PRIVATE_KEY', ''),
+  VAPID_EMAIL:         optional('VAPID_EMAIL', 'mailto:admin@example.com'),
 };
