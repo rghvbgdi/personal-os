@@ -4,7 +4,7 @@ const STATUSES = ['todo', 'solving', 'done', 'revise'];
 
 const progressSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     questionId: { type: String, required: true },
     status: { type: String, enum: STATUSES, default: 'todo' },
     confidence: { type: Number, min: 1, max: 5, default: null },

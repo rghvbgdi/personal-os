@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const dailyReviewSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     date: { type: Date, required: true }, // The date this review is for (midnight UTC)
     intention: { type: String, maxlength: 500, default: '' },  // "What's your #1 goal today?"
     accomplishments: { type: String, maxlength: 2000, default: '' },
