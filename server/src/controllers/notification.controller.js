@@ -5,12 +5,14 @@ import TodoTask from '../models/TodoTask.js';
 import { success, error } from '../utils/response.js';
 import { env } from '../config/env.js';
 
-// Configure web-push with VAPID keys
-webpush.setVapidDetails(
-  env.VAPID_EMAIL,
-  env.VAPID_PUBLIC_KEY,
-  env.VAPID_PRIVATE_KEY,
-);
+// Configure web-push with VAPID keys (only when keys are present)
+if (env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY) {
+  webpush.setVapidDetails(
+    env.VAPID_EMAIL,
+    env.VAPID_PUBLIC_KEY,
+    env.VAPID_PRIVATE_KEY,
+  );
+}
 
 // ── Subscribe ──────────────────────────────────────────────────────────────────
 export const subscribe = async (req, res, next) => {

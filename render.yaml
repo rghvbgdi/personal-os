@@ -27,3 +27,10 @@ services:
         value: 7d
       - key: BCRYPT_ROUNDS
         value: 12
+      # ─── Web Push (VAPID) — generate with web-push generate-vapid-keys ────────
+      - key: VAPID_PUBLIC_KEY
+        sync: false
+      - key: VAPID_PRIVATE_KEY
+        sync: false
+      - key: VAPID_EMAIL
+        sync: false
