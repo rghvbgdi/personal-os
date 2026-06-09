@@ -11,6 +11,7 @@ import { QUERY_KEYS, EVENT_TYPES } from '@/constants/index.js';
 import { cn } from '@/utils/cn.js';
 import toast from 'react-hot-toast';
 import AddEventSheet from './components/AddEventSheet.jsx';
+import PageLayout from '@/components/layout/PageLayout.jsx';
 
 const DAY_LABELS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
@@ -116,30 +117,27 @@ export default function CalendarTab() {
   });
 
   return (
-    <>
-      <div
-        className="px-4 pb-8"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}
-      >
-        {/* ── Header ── */}
-        <div className="flex items-center justify-between mb-5">
-          <h1 className="text-xl font-bold text-[#f0f0f0]">Calendar</h1>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => subscribeToPush().then(() => toast.success('Notifications enabled'))}
-              className="p-2 rounded-xl bg-[#111] border border-[#1e1e1e] text-[#444] hover:text-[#6c63ff] touch-manipulation"
-            >
-              <Bell size={16} />
-            </button>
-            <button
-              onClick={() => setAddOpen(true)}
-              className="flex items-center justify-center h-9 w-9 rounded-xl bg-[#6c63ff] text-white shadow-[0_0_12px_rgba(108,99,255,0.35)] touch-manipulation"
-            >
-              <Plus size={18} />
-            </button>
-          </div>
+    <PageLayout
+      title="Calendar"
+      subtitle="Schedule & Events"
+      actions={
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => subscribeToPush().then(() => toast.success('Notifications enabled'))}
+            className="p-2 rounded-xl bg-[#111] border border-[#1e1e1e] text-[#444] hover:text-[#6c63ff] touch-manipulation"
+          >
+            <Bell size={16} />
+          </button>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 text-white shadow-lg touch-manipulation"
+          >
+            <Plus size={16} />
+          </button>
         </div>
-
+      }
+    >
+      <div className="pb-8">
         {/* ── Month header ── */}
         <div className="rounded-2xl bg-[#111] border border-[#1e1e1e] p-4 mb-4">
           <div className="flex items-center justify-between mb-4">
@@ -300,6 +298,6 @@ export default function CalendarTab() {
         onClose={() => setAddOpen(false)}
         defaultDate={format(selectedDate, 'yyyy-MM-dd')}
       />
-    </>
+    </PageLayout>
   );
 }

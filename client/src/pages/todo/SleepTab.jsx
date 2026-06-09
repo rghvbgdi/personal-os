@@ -9,6 +9,7 @@ import { QUERY_KEYS, SLEEP_QUALITY } from '@/constants/index.js';
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Cell } from 'recharts';
 import { cn } from '@/utils/cn.js';
 import toast from 'react-hot-toast';
+import PageLayout from '@/components/layout/PageLayout.jsx';
 
 const SLEEP_GOAL = 8 * 60; // 8 hours in minutes
 
@@ -188,53 +189,43 @@ export default function SleepTab() {
   const avgHours = parseFloat(((stats.avg7Minutes || 0) / 60).toFixed(1));
 
   return (
-    <>
-      <div
-        className="px-4 pb-8"
-        style={{
-          paddingTop: 'calc(env(safe-area-inset-top) + 16px)',
-          background: 'linear-gradient(180deg, #080d1a 0%, #0a0a0a 200px)',
-          minHeight: '100%',
-        }}
-      >
-        {/* ── Header ── */}
-        <div className="flex items-center justify-between mb-5">
-          <div>
-            <h1 className="text-xl font-bold text-[#d0d8ff]">Sleep</h1>
-            <p className="text-[10px] text-[#4a5080] mt-0.5">Goal: 8h · Track every night</p>
-          </div>
-          <button
-            onClick={() => setLogOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#6c63ff] text-white text-xs font-bold shadow-[0_0_12px_rgba(108,99,255,0.35)] touch-manipulation"
-          >
-            <Plus size={14} /> Log sleep
-          </button>
-        </div>
-
+    <PageLayout
+      title="Sleep Logs"
+      subtitle="Track your rest."
+      actions={
+        <button
+          onClick={() => setLogOpen(true)}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-indigo-500 text-white text-[11px] font-bold shadow-lg touch-manipulation"
+        >
+          <Plus size={14} /> Log
+        </button>
+      }
+    >
+      <div className="pb-8">
         {/* ── Last night card ── */}
         {lastSleep ? (
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-2xl p-5 mb-4"
+            className="rounded-3xl p-6 mb-5"
             style={{ background: 'linear-gradient(135deg, #0d1225, #141830)', border: '1px solid #1e2440' }}
           >
-            <p className="text-[9px] font-bold text-[#4a5080] uppercase tracking-widest mb-2 flex items-center gap-1.5">
-              <Moon size={10} /> Last night
+            <p className="text-[10px] font-bold text-[#4a5080] uppercase tracking-widest mb-3 flex items-center gap-1.5">
+              <Moon size={12} /> Last night
             </p>
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-4xl font-black text-[#d0d8ff] leading-none">
+                <p className="text-5xl font-black text-[#d0d8ff] leading-none mb-1">
                   {fmtDuration(lastSleep.durationMinutes)}
                 </p>
-                <p className="text-[11px] text-[#6a70b0] mt-1">
+                <p className="text-xs text-[#6a70b0] font-medium">
                   {format(new Date(lastSleep.sleepTime), 'h:mm a')} → {format(new Date(lastSleep.wakeTime), 'h:mm a')}
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-2xl">{SLEEP_QUALITY.find((q) => q.value === lastSleep.quality)?.emoji || '😐'}</p>
+                <p className="text-3xl mb-1">{SLEEP_QUALITY.find((q) => q.value === lastSleep.quality)?.emoji || '😐'}</p>
                 <p className={cn(
-                  'text-[10px] font-bold mt-1',
+                  'text-[11px] font-bold',
                   diffFromAvg >= 0 ? 'text-[#22c55e]' : 'text-[#ef4444]',
                 )}>
                   {diffFromAvg >= 0 ? '+' : ''}{fmtDuration(Math.abs(diffFromAvg))} vs avg
@@ -243,12 +234,12 @@ export default function SleepTab() {
             </div>
 
             {/* Progress bar */}
-            <div className="mt-4">
-              <div className="flex justify-between text-[9px] text-[#4a5080] mb-1.5">
+            <div className="mt-6">
+              <div className="flex justify-between text-[10px] font-bold text-[#4a5080] mb-2 uppercase tracking-widest">
                 <span>0h</span>
                 <span>Goal: 8h</span>
               </div>
-              <div className="h-2 rounded-full bg-[#101828] overflow-hidden">
+              <div className="h-3 rounded-full bg-[#101828] overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(100, (lastSleep.durationMinutes / SLEEP_GOAL) * 100)}%` }}
@@ -263,20 +254,20 @@ export default function SleepTab() {
                   }}
                 />
               </div>
-              <p className="text-[9px] text-[#4a5080] mt-1.5">
+              <p className="text-xs font-medium text-[#4a5080] mt-3">
                 Goal hit {hitGoal}/{Math.min(logs.length, 7)} nights this week
               </p>
             </div>
           </motion.div>
         ) : (
-          <div className="rounded-2xl p-6 mb-4 border border-[#1e2440] text-center"
+          <div className="rounded-3xl p-8 mb-5 border border-[#1e2440] text-center"
             style={{ background: 'linear-gradient(135deg, #0d1225, #141830)' }}
           >
-            <p className="text-3xl mb-2">🌙</p>
-            <p className="text-sm font-semibold text-[#4a5080]">No sleep logged yet</p>
+            <p className="text-4xl mb-3">🌙</p>
+            <p className="text-base font-semibold text-[#4a5080]">No sleep logged yet</p>
             <button
               onClick={() => setLogOpen(true)}
-              className="mt-3 px-4 py-2 rounded-xl bg-[#6c63ff]/20 text-[#6c63ff] text-xs font-bold touch-manipulation"
+              className="mt-4 px-5 py-2.5 rounded-xl bg-[#6c63ff]/20 text-[#6c63ff] text-sm font-bold touch-manipulation"
             >
               Log last night
             </button>
@@ -289,19 +280,19 @@ export default function SleepTab() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="rounded-2xl p-4 mb-4"
+            className="rounded-3xl p-5 mb-5"
             style={{ background: '#0d1020', border: '1px solid #1e2040' }}
           >
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-[9px] font-bold text-[#4a5080] uppercase tracking-widest">7-Day History</p>
-              <p className="text-[10px] text-[#6a70b0]">avg {avgHours}h</p>
+            <div className="flex items-center justify-between mb-5">
+              <p className="text-[10px] font-bold text-[#4a5080] uppercase tracking-widest">7-Day History</p>
+              <p className="text-xs font-bold text-[#6a70b0]">avg {avgHours}h</p>
             </div>
-            <ResponsiveContainer width="100%" height={110}>
-              <BarChart data={chartData} barSize={24} margin={{ top: 4, right: 4, left: -30, bottom: 0 }}>
-                <XAxis dataKey="label" tick={{ fontSize: 9, fill: '#4a5080' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 9, fill: '#4a5080' }} axisLine={false} tickLine={false} domain={[0, 10]} />
+            <ResponsiveContainer width="100%" height={140}>
+              <BarChart data={chartData} barSize={28} margin={{ top: 4, right: 4, left: -30, bottom: 0 }}>
+                <XAxis dataKey="label" tick={{ fontSize: 10, fill: '#4a5080', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: '#4a5080', fontWeight: 'bold' }} axisLine={false} tickLine={false} domain={[0, 10]} />
                 <ReferenceLine y={8} stroke="#6c63ff30" strokeDasharray="4 4" />
-                <Bar dataKey="hours" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="hours" radius={[6, 6, 0, 0]}>
                   {chartData.map((d, i) => (
                     <Cell key={i} fill={d.isGoal ? '#22c55e' : d.hours >= 6 ? '#f59e0b' : '#ef4444'} fillOpacity={0.8} />
                   ))}
@@ -317,15 +308,15 @@ export default function SleepTab() {
             initial={{ opacity: 0, y: 6 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="rounded-2xl p-4"
+            className="rounded-3xl p-5"
             style={{ background: '#0d1020', border: '1px solid #1e2040' }}
           >
-            <p className="text-[9px] font-bold text-[#4a5080] uppercase tracking-widest mb-3">Insights</p>
-            <div className="space-y-2">
+            <p className="text-[10px] font-bold text-[#4a5080] uppercase tracking-widest mb-4">Insights</p>
+            <div className="space-y-3">
               {insights.map((insight, i) => (
-                <div key={i} className="flex items-start gap-2.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#6c63ff] flex-shrink-0 mt-1.5" />
-                  <p className="text-[11px] text-[#6a70b0] leading-relaxed">{insight}</p>
+                <div key={i} className="flex items-start gap-3">
+                  <div className="w-2 h-2 rounded-full bg-[#6c63ff] flex-shrink-0 mt-1.5" />
+                  <p className="text-xs font-medium text-[#6a70b0] leading-relaxed">{insight}</p>
                 </div>
               ))}
             </div>
@@ -334,6 +325,6 @@ export default function SleepTab() {
       </div>
 
       <LogSleepSheet open={logOpen} onClose={() => setLogOpen(false)} />
-    </>
+    </PageLayout>
   );
 }

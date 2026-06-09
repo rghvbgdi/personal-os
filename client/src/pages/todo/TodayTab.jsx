@@ -15,6 +15,7 @@ import { QUERY_KEYS, EVENT_TYPES } from '@/constants/index.js';
 import { cn } from '@/utils/cn.js';
 import { formatCurrency } from '@/utils/formatters.js';
 import AddEventSheet from './components/AddEventSheet.jsx';
+import PageLayout from '@/components/layout/PageLayout.jsx';
 
 const now = new Date();
 
@@ -250,11 +251,8 @@ export default function TodayTab() {
   }
 
   return (
-    <>
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.18 }}
+    <PageLayout title="Today" subtitle={format(now, 'EEEE, d MMMM')}>
+      <div
         className="px-4 pb-8"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}
       >
@@ -263,9 +261,6 @@ export default function TodayTab() {
           <h1 className="text-xl font-bold text-[#f0f0f0] leading-tight">
             {greeting()}, {user?.name?.split(' ')[0] || 'Raghav'} 👋
           </h1>
-          <p className="text-[11px] text-[#444] mt-0.5 font-medium">
-            {format(now, 'EEEE, d MMMM')}
-          </p>
           {dash?.internship && (
             <p className="text-[11px] text-[#6c63ff] mt-0.5 font-semibold">
               Day {Math.max(1, dash.internship.day)} of {dash.internship.total} at {dash.internship.companyName || 'Visa'}
@@ -361,10 +356,10 @@ export default function TodayTab() {
             </div>
           </div>
         )}
-      </motion.div>
+      </div>
 
       {/* Add Event Sheet */}
       <AddEventSheet open={addEventOpen} onClose={() => setAddEventOpen(false)} />
-    </>
+    </PageLayout>
   );
 }

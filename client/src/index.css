@@ -13,14 +13,24 @@
 /* ─── Prevent iOS bounce / overscroll on body ─────────────────────────── */
 html, body {
   height: 100%;
-  height: -webkit-fill-available; /* Crucial for iOS Safari Keyboard fix */
+  width: 100%;
+  overflow: hidden; /* Lock the root to prevent bounce */
+  position: fixed; /* Prevent rubber-banding on iOS */
   overscroll-behavior: none;
-  min-height: 100dvh;
+}
+
+body {
+  background-color: #000000; /* Deepest black for iPhone 14 Pro OLED */
+  color: #ffffff;
+  font-family: 'Inter', sans-serif;
 }
 
 #root {
   height: 100%;
-  min-height: 100dvh;
+  height: 100dvh; /* Dynamic viewport height */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Prevent iOS text-size adjustment ───────────────────────────────── */
@@ -32,6 +42,7 @@ html {
 /* ─── Remove tap highlight on iOS ────────────────────────────────────── */
 * {
   -webkit-tap-highlight-color: transparent;
+  outline: none !important;
 }
 
 /* ─── Prevent double-tap zoom on interactive elements ────────────────── */
@@ -43,20 +54,11 @@ button, a {
 /* ALL input types must be ≥16px to prevent iOS zoom */
 input,
 select,
-textarea,
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="number"],
-input[type="date"],
-input[type="month"],
-input[type="search"],
-input[type="tel"],
-input[type="url"] {
+textarea {
   font-size: 16px !important;
 }
 
-/* ─── Hide scrollbars on mobile while keeping functionality ──────────── */
+/* ─── Hide scrollbars on mobile ──────────────────────────────────────── */
 @media (max-width: 1024px) {
   ::-webkit-scrollbar { display: none; }
   * { scrollbar-width: none; }
@@ -66,40 +68,16 @@ input[type="url"] {
   * {
     box-sizing: border-box;
   }
-
-  ::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #262626;
-    border-radius: 999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #404040;
-  }
-
-  ::selection {
-    background: rgba(5, 150, 105, 0.25);
-    color: #fafafa;
-  }
 }
 
 @layer components {
   .stat-card {
-    @apply rounded-xl bg-surface border border-border p-5 shadow-card;
+    @apply rounded-3xl bg-surface border border-border p-5 shadow-sm;
   }
-  .section-title {
-    @apply text-sm font-semibold text-text-secondary uppercase tracking-wider;
-  }
-
+  
   /* Smooth momentum scrolling on iOS */
-  .scroll-smooth-ios {
+  .scroll-ios {
     -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    overscroll-behavior-y: contain;
+    overflow-y: auto;
   }
 }

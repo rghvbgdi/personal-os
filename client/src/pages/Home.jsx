@@ -1,165 +1,50 @@
-/**
- * Home.jsx — Segment Selector (Command Center)
- *
- * Full-screen 2×2 card grid shown on first open.
- * Remembers last-visited segment in localStorage.
- * Each card shows a live stat fetched in parallel.
- */
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useQuery } from '@tanstack/react-query';
-import { Wallet, CheckSquare, Code2, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { Wallet, CheckSquare, Code2, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext.jsx';
-import { expensesApi } from '@/api/expenses.api.js';
-import { taskApi, placementApi } from '@/api/index.js';
-import { ROUTES, QUERY_KEYS } from '@/constants/index.js';
-import { formatCurrency } from '@/utils/formatters.js';
+import { ROUTES } from '@/constants/index.js';
 import { cn } from '@/utils/cn.js';
 
 const LAST_SEGMENT_KEY = 'personal-os:last-segment';
 
-// ── Segment definitions ────────────────────────────────────────────────────────
-const SEGMENTS = [
+// ── Only 3 Major Components ──
+const MODULES = [
   {
     id: 'expense',
     icon: Wallet,
-    emoji: '💸',
     title: 'Expense Tracker',
-    subtitle: 'Track every rupee',
+    subtitle: 'Manage your finances, track spending, and review analytics.',
     route: ROUTES.DASHBOARD,
-    accent: '#22c55e',
+    accent: 'from-emerald-400 to-teal-500',
+    glow: 'bg-emerald-500/20',
+    text: 'text-emerald-400',
   },
   {
     id: 'todo',
     icon: CheckSquare,
-    emoji: '✅',
-    title: 'Todo & Work',
-    subtitle: 'Stay on top',
+    title: 'Todo Component',
+    subtitle: 'Tasks, Calendar, and Sleep Tracking.',
     route: ROUTES.TODO_TODAY,
-    accent: '#6c63ff',
+    accent: 'from-blue-400 to-indigo-500',
+    glow: 'bg-blue-500/20',
+    text: 'text-blue-400',
   },
   {
     id: 'placement',
     icon: Code2,
-    emoji: '🎯',
     title: 'Placement',
-    subtitle: 'DSA · System Design · Prep',
+    subtitle: 'DSA tracking, interview prep, and technical notes.',
     route: ROUTES.PLACEMENT,
-    accent: '#f59e0b',
-  },
-  {
-    id: 'overview',
-    icon: LayoutDashboard,
-    emoji: '📊',
-    title: 'Dashboard',
-    subtitle: 'Your life at a glance',
-    route: ROUTES.DASHBOARD,
-    accent: '#3b82f6',
+    accent: 'from-purple-400 to-pink-500',
+    glow: 'bg-purple-500/20',
+    text: 'text-purple-400',
   },
 ];
 
-// ── Live stat hooks (fetched in parallel, shown on each card) ──────────────────
-function useLiveStats() {
-  const now = new Date();
-  const startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const endDate   = now.toISOString();
-
-  const { data: dashData } = useQuery({
-    queryKey: [...QUERY_KEYS.EXPENSE_DASHBOARD, startDate, endDate],
-    queryFn: () => expensesApi.getDashboard({ startDate, endDate }).then((r) => r.data.data),
-    staleTime: 1000 * 60 * 5,
-  });
-
-  const { data: tasksData } = useQuery({
-    queryKey: QUERY_KEYS.TASKS_TODAY,
-    queryFn: () => taskApi.getToday().then((r) => r.data.data),
-    staleTime: 1000 * 60 * 2,
-  });
-
-  const { data: placementData } = useQuery({
-    queryKey: QUERY_KEYS.PLACEMENT_STATS,
-    queryFn: () => placementApi.getStats().then((r) => r.data.data),
-    staleTime: 1000 * 60 * 10,
-  });
-
-  const monthlyExpense = dashData?.currentMonth?.expense?.total ?? null;
-  const tasksDueToday  = tasksData?.tasks?.length ?? null;
-  const problemsSolved = placementData
-    ? Object.values(placementData).reduce((sum, s) => sum + (s?.mastered ?? 0) + (s?.confident ?? 0), 0)
-    : null;
-
-  return {
-    expense:   monthlyExpense !== null ? `${formatCurrency(monthlyExpense)} spent` : 'Loading…',
-    todo:      tasksDueToday  !== null ? `${tasksDueToday} task${tasksDueToday !== 1 ? 's' : ''} due today` : 'Loading…',
-    placement: problemsSolved !== null ? `${problemsSolved} topics mastered` : 'Loading…',
-    overview:  monthlyExpense !== null ? `${formatCurrency(monthlyExpense)} this month` : 'Loading…',
-  };
-}
-
-// ── Card component ─────────────────────────────────────────────────────────────
-function SegmentCard({ segment, stat, onSelect, index }) {
-  return (
-    <motion.button
-      id={`segment-card-${segment.id}`}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.22, delay: index * 0.07, ease: 'easeOut' }}
-      whileTap={{ scale: 0.97 }}
-      onClick={() => onSelect(segment)}
-      className={cn(
-        'relative flex flex-col justify-between p-5 rounded-3xl text-left',
-        'bg-[#111] border border-[#222] overflow-hidden',
-        'transition-all duration-200 touch-manipulation',
-        'active:border-opacity-60',
-      )}
-      style={{ minHeight: 160 }}
-    >
-      {/* Glow orb */}
-      <div
-        className="absolute -top-6 -right-6 w-24 h-24 rounded-full opacity-10 blur-2xl pointer-events-none"
-        style={{ background: segment.accent }}
-      />
-
-      {/* Accent line top */}
-      <div
-        className="absolute top-0 left-5 right-5 h-[2px] rounded-b-full opacity-60"
-        style={{ background: segment.accent }}
-      />
-
-      {/* Icon */}
-      <div
-        className="h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 mb-3"
-        style={{ background: `${segment.accent}18`, border: `1px solid ${segment.accent}30` }}
-      >
-        <span className="text-2xl leading-none">{segment.emoji}</span>
-      </div>
-
-      {/* Text */}
-      <div className="flex-1">
-        <p className="text-sm font-bold text-[#f0f0f0] leading-tight">{segment.title}</p>
-        <p className="text-[11px] text-[#555] mt-0.5 leading-tight">{segment.subtitle}</p>
-      </div>
-
-      {/* Live stat */}
-      <div className="mt-3 flex items-center justify-between">
-        <span
-          className="text-[10px] font-bold truncate max-w-[80%]"
-          style={{ color: segment.accent }}
-        >
-          {stat}
-        </span>
-        <ChevronRight size={12} style={{ color: segment.accent }} className="flex-shrink-0" />
-      </div>
-    </motion.button>
-  );
-}
-
-// ── Main component ─────────────────────────────────────────────────────────────
 export default function Home() {
   const { user } = useAuth();
-  const navigate  = useNavigate();
-  const stats     = useLiveStats();
+  const navigate = useNavigate();
 
   // If user has a last segment preference → jump straight there
   useEffect(() => {
@@ -167,83 +52,80 @@ export default function Home() {
     if (last) {
       navigate(last, { replace: true });
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [navigate]);
 
-  const handleSelect = (segment) => {
-    localStorage.setItem(LAST_SEGMENT_KEY, segment.route);
-    navigate(segment.route);
-  };
-
-  const handleForgetSegment = () => {
-    localStorage.removeItem(LAST_SEGMENT_KEY);
+  const handleSelect = (module) => {
+    localStorage.setItem(LAST_SEGMENT_KEY, module.route);
+    navigate(module.route);
   };
 
   return (
     <div
-      className="flex flex-col bg-[#0a0a0a] min-h-dvh"
+      className="fixed inset-0 flex flex-col bg-black overflow-y-auto overflow-x-hidden scroll-ios"
       style={{
-        paddingTop:    'calc(env(safe-area-inset-top) + 24px)',
+        paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
         paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)',
-        paddingLeft:   '16px',
-        paddingRight:  '16px',
       }}
     >
-      {/* ── Header ── */}
-      <motion.div
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="mb-8"
-      >
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-[11px] font-bold text-[#444] uppercase tracking-widest mb-1">Personal OS</p>
-            <h1 className="text-2xl font-black text-[#f0f0f0] leading-tight">
-              {greeting()}, {user?.name?.split(' ')[0] || 'Raghav'}
-            </h1>
-            <p className="text-[12px] text-[#444] mt-1">Where do you want to go?</p>
-          </div>
+      <div className="px-6 max-w-md mx-auto w-full flex-1 flex flex-col">
+        {/* ── Header ── */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
+          className="mb-10 mt-4"
+        >
+          <p className="text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em] mb-2">Personal OS</p>
+          <h1 className="text-3xl font-black text-white leading-tight">
+            Welcome back,<br/>
+            <span className="text-zinc-400">{user?.name?.split(' ')[0] || 'Raghav'}.</span>
+          </h1>
+        </motion.div>
 
-          {/* Switch segment button — only meaningful if navigated here manually */}
-          <button
-            onClick={handleForgetSegment}
-            className="mt-1 px-3 py-1.5 rounded-xl bg-[#111] border border-[#222] text-[10px] font-bold text-[#555] touch-manipulation"
-            title="Clear saved segment so this screen shows every time"
-          >
-            Switch
-          </button>
+        {/* ── The 3 Component Cards ── */}
+        <div className="space-y-4 flex-1">
+          {MODULES.map((m, i) => (
+            <motion.button
+              key={m.id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: i * 0.1, ease: [0.23, 1, 0.32, 1] }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => handleSelect(m)}
+              className="w-full relative group overflow-hidden rounded-[32px] p-6 text-left border border-white/5 bg-zinc-900/40 touch-manipulation"
+            >
+              {/* Abstract Glow Background */}
+              <div className={cn("absolute -top-10 -right-10 w-40 h-40 rounded-full blur-[50px] opacity-50", m.glow)} />
+              
+              <div className="relative z-10 flex items-start justify-between">
+                <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center bg-zinc-950 border border-white/5 shadow-xl mb-4", m.text)}>
+                  <m.icon size={26} strokeWidth={2} />
+                </div>
+                <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                  <ChevronRight size={16} className="text-zinc-500" />
+                </div>
+              </div>
+
+              <div className="relative z-10">
+                <h2 className="text-xl font-black text-white mb-2">{m.title}</h2>
+                <p className="text-[13px] text-zinc-400 font-medium leading-relaxed max-w-[85%]">{m.subtitle}</p>
+              </div>
+            </motion.button>
+          ))}
         </div>
-      </motion.div>
 
-      {/* ── 2×2 Card Grid ── */}
-      <div className="grid grid-cols-2 gap-3 flex-1">
-        {SEGMENTS.map((seg, i) => (
-          <SegmentCard
-            key={seg.id}
-            segment={seg}
-            stat={stats[seg.id]}
-            onSelect={handleSelect}
-            index={i}
-          />
-        ))}
+        {/* ── Footer ── */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="text-center pb-8 mt-12"
+        >
+          <p className="text-[10px] font-bold text-zinc-700 uppercase tracking-widest">
+            Select a module to begin
+          </p>
+        </motion.div>
       </div>
-
-      {/* ── Footer ── */}
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-center text-[10px] text-[#2a2a2a] mt-6"
-      >
-        Tap any card · Your choice is remembered
-      </motion.p>
     </div>
   );
-}
-
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 17) return 'Good afternoon';
-  return 'Good evening';
 }
