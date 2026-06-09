@@ -13,8 +13,8 @@
 /* ─── Prevent iOS bounce / overscroll on body ─────────────────────────── */
 html, body {
   height: 100%;
+  height: -webkit-fill-available; /* Crucial for iOS Safari Keyboard fix */
   overscroll-behavior: none;
-  /* Use dvh so viewport height accounts for iOS Safari URL bar hiding */
   min-height: 100dvh;
 }
 
