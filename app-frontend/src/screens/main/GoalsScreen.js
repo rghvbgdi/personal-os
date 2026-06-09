@@ -21,13 +21,13 @@ function ProgressBar({ percent, color }) {
   );
 }
 
-function GoalCard({ item, onContribute }) {
+function GoalCard({ item, onContribute, onEdit }) {
   const percent = getPercent(item.savedAmount || 0, item.targetAmount || 1);
   const color = item.color || colors.accent;
   const isComplete = item.isCompleted || percent >= 100;
 
   return (
-    <View style={[styles.goalCard, { borderLeftColor: color, borderLeftWidth: 3 }]}>
+    <TouchableOpacity style={[styles.goalCard, { borderLeftColor: color, borderLeftWidth: 3 }]} onPress={() => onEdit(item)}>
       <View style={styles.goalHeader}>
         <View style={styles.goalLeft}>
           <Text style={styles.goalTitle} numberOfLines={1}>{item.title}</Text>
@@ -53,14 +53,27 @@ function GoalCard({ item, onContribute }) {
       {item.deadline && (
         <Text style={styles.deadline}>🗓 Due {formatDate(item.deadline)}</Text>
       )}
-    </View>
+    </TouchableOpacity>
   );
 }
 
-function AddGoalModal({ visible, onClose, onSuccess }) {
+function AddGoalModal({ visible, onClose, onSuccess, initialData }) {
   const empty = { title: '', targetAmount: '', type: 'savings', deadline: '', color: colors.accent };
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        ...initialData,
+        targetAmount: initialData.targetAmount.toString(),
+        deadline: initialData.deadline ? initialData.deadline.split('T')[0] : '',
+      });
+    } else {
+      setForm(empty);
+    }
+  }, [initialData, visible]);
+
   const set = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
   const handleSave = async () => {
@@ -72,13 +85,35 @@ function AddGoalModal({ visible, onClose, onSuccess }) {
     if (isNaN(parsed) || parsed <= 0) { Alert.alert('Validation', 'Enter a valid amount.'); return; }
     setSaving(true);
     try {
-      await goalAPI.create({ ...form, targetAmount: parsed, savedAmount: 0 });
-      setForm(empty);
+      if (initialData) {
+        await goalAPI.update(initialData._id, { ...form, targetAmount: parsed });
+      } else {
+        await goalAPI.create({ ...form, targetAmount: parsed, savedAmount: 0 });
+      }
       onSuccess?.();
       onClose();
     } catch (err) {
-      Alert.alert('Error', err?.response?.data?.message || 'Could not create goal.');
+      Alert.alert('Error', err?.response?.data?.message || 'Could not save goal.');
     } finally { setSaving(false); }
+  };
+
+  const handleDelete = () => {
+    Alert.alert('Delete', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await goalAPI.remove(initialData._id);
+            onSuccess?.();
+            onClose();
+          } catch (err) {
+            Alert.alert('Error', 'Failed to delete');
+          }
+        }
+      }
+    ]);
   };
 
   return (
@@ -86,7 +121,7 @@ function AddGoalModal({ visible, onClose, onSuccess }) {
       <View style={styles.modalContainer}>
         <View style={styles.modalHeader}>
           <TouchableOpacity onPress={onClose}><Text style={styles.modalCancel}>Cancel</Text></TouchableOpacity>
-          <Text style={styles.modalTitle}>New Goal</Text>
+          <Text style={styles.modalTitle}>{initialData ? 'Edit' : 'New'} Goal</Text>
           <TouchableOpacity onPress={handleSave} disabled={saving}>
             {saving ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.modalSave}>Save</Text>}
           </TouchableOpacity>
@@ -121,6 +156,12 @@ function AddGoalModal({ visible, onClose, onSuccess }) {
                   onPress={() => set('color', c)} />
               ))}
             </View>
+
+            {initialData && (
+              <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
+                <Text style={styles.deleteBtnText}>Delete Goal</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         </KeyboardAvoidingView>
       </View>
@@ -143,7 +184,7 @@ function ContributeModal({ visible, goal, onClose, onSuccess }) {
       onClose();
     } catch (err) {
       Alert.alert('Error', err?.response?.data?.message || 'Could not add contribution.');
-    } finally { setSaving(false); }
+    } finally { anonymizedSaving = false; }
   };
 
   return (
@@ -173,6 +214,7 @@ export default function GoalsScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [editingGoal, setEditingGoal] = useState(null);
   const [contributeGoal, setContributeGoal] = useState(null);
 
   const load = useCallback(async () => {
@@ -185,6 +227,16 @@ export default function GoalsScreen() {
   }, []);
 
   useEffect(() => { load(); }, [load]);
+
+  const handleEdit = (goal) => {
+    setEditingGoal(goal);
+    setShowAdd(true);
+  };
+
+  const handleClose = () => {
+    setShowAdd(false);
+    setEditingGoal(null);
+  };
 
   const totalSaved = goals.reduce((s, g) => s + (g.savedAmount || 0), 0);
   const totalTarget = goals.reduce((s, g) => s + (g.targetAmount || 0), 0);
@@ -219,7 +271,7 @@ export default function GoalsScreen() {
             </View>
           }
           renderItem={({ item }) => (
-            <GoalCard item={item} onContribute={setContributeGoal} />
+            <GoalCard item={item} onContribute={setContributeGoal} onEdit={handleEdit} />
           )}
         />
       )}
@@ -228,7 +280,7 @@ export default function GoalsScreen() {
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
 
-      <AddGoalModal visible={showAdd} onClose={() => setShowAdd(false)} onSuccess={load} />
+      <AddGoalModal visible={showAdd} onClose={handleClose} onSuccess={load} initialData={editingGoal} />
       {contributeGoal && (
         <ContributeModal
           visible={!!contributeGoal}
@@ -314,4 +366,6 @@ const styles = StyleSheet.create({
   cancelBtnText: { color: colors.textSecondary, fontSize: typography.md },
   saveBtn: { flex: 1, padding: 14, borderRadius: radius.md, backgroundColor: colors.accent, alignItems: 'center' },
   saveBtnText: { color: colors.white, fontSize: typography.md, fontWeight: fontWeight.semibold },
+  deleteBtn: { marginTop: spacing.xxl, backgroundColor: colors.error + '11', padding: spacing.md, borderRadius: radius.md, alignItems: 'center', borderWidth: 1, borderColor: colors.error + '33' },
+  deleteBtnText: { color: colors.error, fontWeight: fontWeight.bold },
 });

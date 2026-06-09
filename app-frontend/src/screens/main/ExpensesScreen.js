@@ -37,11 +37,11 @@ function FilterChip({ label, active, onPress }) {
   );
 }
 
-function ExpenseItem({ item }) {
+function ExpenseItem({ item, onPress }) {
   const color = TYPE_COLORS[item.type] || colors.textSecondary;
   const icon = TYPE_ICONS[item.type] || '•';
   return (
-    <View style={styles.item}>
+    <TouchableOpacity style={styles.item} onPress={() => onPress(item)}>
       <View style={[styles.itemIcon, { backgroundColor: color + '22' }]}>
         <Text style={[styles.itemIconText, { color }]}>{icon}</Text>
       </View>
@@ -56,17 +56,28 @@ function ExpenseItem({ item }) {
       <Text style={[styles.itemAmount, { color }]}>
         {item.type === 'income' ? '+' : '-'}{formatINR(item.amount)}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 
-function AddModal({ visible, onClose, onSuccess }) {
+function AddModal({ visible, onClose, onSuccess, initialData }) {
   const empty = {
     title: '', amount: '', type: 'expense', category: 'Other',
     paymentMethod: 'UPI', notes: '', isRecurring: false,
   };
   const [form, setForm] = useState(empty);
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (initialData) {
+      setForm({
+        ...initialData,
+        amount: initialData.amount.toString(),
+      });
+    } else {
+      setForm(empty);
+    }
+  }, [initialData, visible]);
 
   const set = (key, val) => setForm((f) => ({ ...f, [key]: val }));
 
@@ -82,8 +93,11 @@ function AddModal({ visible, onClose, onSuccess }) {
     }
     setSaving(true);
     try {
-      await expenseAPI.create({ ...form, amount: parsed, date: new Date().toISOString() });
-      setForm(empty);
+      if (initialData) {
+        await expenseAPI.update(initialData._id, { ...form, amount: parsed });
+      } else {
+        await expenseAPI.create({ ...form, amount: parsed, date: new Date().toISOString() });
+      }
       onSuccess?.();
       onClose();
     } catch (err) {
@@ -93,19 +107,37 @@ function AddModal({ visible, onClose, onSuccess }) {
     }
   };
 
+  const handleDelete = () => {
+    Alert.alert('Delete', 'Are you sure?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await expenseAPI.remove(initialData._id);
+            onSuccess?.();
+            onClose();
+          } catch (err) {
+            Alert.alert('Error', 'Failed to delete');
+          }
+        }
+      }
+    ]);
+  };
+
   return (
     <Modal visible={visible} animationType="slide" presentationStyle="pageSheet" onRequestClose={onClose}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
             <TouchableOpacity onPress={onClose}><Text style={styles.modalCancel}>Cancel</Text></TouchableOpacity>
-            <Text style={styles.modalTitle}>Add Transaction</Text>
+            <Text style={styles.modalTitle}>{initialData ? 'Edit' : 'Add'} Transaction</Text>
             <TouchableOpacity onPress={handleSave} disabled={saving}>
               {saving ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.modalSave}>Save</Text>}
             </TouchableOpacity>
           </View>
           <ScrollView contentContainerStyle={styles.modalBody} keyboardShouldPersistTaps="handled">
-            {/* Type toggle */}
             <Text style={styles.fieldLabel}>Type</Text>
             <View style={styles.typeRow}>
               {['expense', 'income', 'investment'].map((t) => (
@@ -147,7 +179,7 @@ function AddModal({ visible, onClose, onSuccess }) {
               ))}
             </ScrollView>
 
-            <Text style={styles.fieldLabel}>Notes (optional)</Text>
+            <Text style={styles.fieldLabel}>Notes</Text>
             <TextInput style={[styles.input, { height: 80, textAlignVertical: 'top' }]}
               value={form.notes} onChangeText={(v) => set('notes', v)}
               placeholder="Any notes..." placeholderTextColor={colors.textMuted} multiline />
@@ -158,6 +190,12 @@ function AddModal({ visible, onClose, onSuccess }) {
                 trackColor={{ false: colors.border, true: colors.accent }}
                 thumbColor={colors.white} />
             </View>
+
+            {initialData && (
+              <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
+                <Text style={styles.deleteBtnText}>Delete Transaction</Text>
+              </TouchableOpacity>
+            )}
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -171,6 +209,7 @@ export default function ExpensesScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
+  const [editingExpense, setEditingExpense] = useState(null);
 
   const load = useCallback(async () => {
     try {
@@ -183,6 +222,16 @@ export default function ExpensesScreen() {
   }, [filter]);
 
   useEffect(() => { setLoading(true); load(); }, [load]);
+
+  const handleEdit = (item) => {
+    setEditingExpense(item);
+    setShowAdd(true);
+  };
+
+  const handleClose = () => {
+    setShowAdd(false);
+    setEditingExpense(null);
+  };
 
   // Group by date
   const grouped = expenses.reduce((acc, item) => {
@@ -221,7 +270,7 @@ export default function ExpensesScreen() {
               <View style={styles.groupCard}>
                 {section.items.map((e, i) => (
                   <View key={e._id}>
-                    <ExpenseItem item={e} />
+                    <ExpenseItem item={e} onPress={handleEdit} />
                     {i < section.items.length - 1 && <View style={styles.divider} />}
                   </View>
                 ))}
@@ -231,12 +280,11 @@ export default function ExpensesScreen() {
         />
       )}
 
-      {/* FAB */}
       <TouchableOpacity style={styles.fab} onPress={() => setShowAdd(true)} activeOpacity={0.85}>
         <Text style={styles.fabText}>+</Text>
       </TouchableOpacity>
 
-      <AddModal visible={showAdd} onClose={() => setShowAdd(false)} onSuccess={load} />
+      <AddModal visible={showAdd} onClose={handleClose} onSuccess={load} initialData={editingExpense} />
     </SafeAreaView>
   );
 }
@@ -315,4 +363,6 @@ const styles = StyleSheet.create({
   pillText: { fontSize: typography.sm, color: colors.textSecondary },
   pillTextActive: { color: colors.white, fontWeight: fontWeight.medium },
   switchRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: spacing.md },
+  deleteBtn: { marginTop: spacing.xxl, backgroundColor: colors.error + '11', padding: spacing.md, borderRadius: radius.md, alignItems: 'center', borderWidth: 1, borderColor: colors.error + '33' },
+  deleteBtnText: { color: colors.error, fontWeight: fontWeight.bold },
 });

@@ -13,14 +13,22 @@ import HabitsScreen from '../screens/main/HabitsScreen';
 import MoreScreen from '../screens/main/MoreScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
 
+// Missing Screens
+import TasksScreen from '../screens/todo/TasksScreen';
+import CalendarScreen from '../screens/todo/CalendarScreen';
+import SleepScreen from '../screens/todo/SleepScreen';
+import PomodoroScreen from '../screens/pomodoro/PomodoroScreen';
+import PlacementScreen from '../screens/placement/PlacementScreen';
+import NotesScreen from '../screens/notes/NotesScreen';
+
 const Tab = createBottomTabNavigator();
 const MoreStack = createStackNavigator();
 
 const TAB_ICONS = {
   Dashboard: { active: '⌂', inactive: '⌂' },
   Expenses: { active: '◈', inactive: '◈' },
+  Tasks: { active: '📝', inactive: '📝' },
   Goals: { active: '◎', inactive: '◎' },
-  Habits: { active: '✔', inactive: '✔' },
   More: { active: '⊞', inactive: '⊞' },
 };
 
@@ -44,6 +52,12 @@ function MoreStackScreen() {
     >
       <MoreStack.Screen name="MoreIndex" component={MoreScreen} options={{ title: 'More' }} />
       <MoreStack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
+      <MoreStack.Screen name="Habits" component={HabitsScreen} options={{ title: 'Habits' }} />
+      <MoreStack.Screen name="Calendar" component={CalendarScreen} options={{ title: 'Calendar' }} />
+      <MoreStack.Screen name="Sleep" component={SleepScreen} options={{ title: 'Sleep' }} />
+      <MoreStack.Screen name="Pomodoro" component={PomodoroScreen} options={{ title: 'Pomodoro' }} />
+      <MoreStack.Screen name="Placement" component={PlacementScreen} options={{ title: 'Placement' }} />
+      <MoreStack.Screen name="Notes" component={NotesScreen} options={{ title: 'Notes' }} />
     </MoreStack.Navigator>
   );
 }
@@ -57,6 +71,7 @@ export default function MainNavigator() {
         ),
         tabBarActiveTintColor: colors.accent,
         tabBarInactiveTintColor: colors.textMuted,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
@@ -72,8 +87,8 @@ export default function MainNavigator() {
     >
       <Tab.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Home' }} />
       <Tab.Screen name="Expenses" component={ExpensesScreen} />
+      <Tab.Screen name="Tasks" component={TasksScreen} />
       <Tab.Screen name="Goals" component={GoalsScreen} />
-      <Tab.Screen name="Habits" component={HabitsScreen} />
       <Tab.Screen
         name="More"
         component={MoreStackScreen}

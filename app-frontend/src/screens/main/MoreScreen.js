@@ -7,9 +7,13 @@ import { colors, spacing, radius, typography, fontWeight } from '../../theme';
 import { getInitials } from '../../utils/formatters';
 
 const MENU = [
-  { icon: '📝', label: 'Notes', screen: 'Notes', desc: 'Rich text notes & quick capture' },
-  { icon: '🧠', label: 'Placement Tracker', screen: 'Placement', desc: 'DSA, OOPS, DBMS, CN, OS topics' },
+  { icon: '📝', label: 'Tasks', screen: 'Tasks', desc: 'Todo list & priority tasks' },
+  { icon: '📅', label: 'Calendar', screen: 'Calendar', desc: 'Events & schedule' },
+  { icon: '💤', label: 'Sleep Logs', screen: 'Sleep', desc: 'Track sleep quality' },
+  { icon: '📓', label: 'Notes', screen: 'Notes', desc: 'Rich text notes & quick capture' },
+  { icon: '🧠', label: 'Placement Tracker', screen: 'Placement', desc: 'DSA, OOPS, DBMS, topics' },
   { icon: '⏱', label: 'Pomodoro', screen: 'Pomodoro', desc: 'Focus sessions & break timers' },
+  { icon: '🔥', label: 'Habits', screen: 'Habits', desc: 'Daily habits & streaks' },
   { icon: '👤', label: 'Profile', screen: 'Profile', desc: 'Edit budget, currency, settings' },
 ];
 
@@ -17,7 +21,7 @@ export default function MoreScreen({ navigation }) {
   const { user } = useAuth();
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView style={styles.safe} edges={['top']}>
       <ScrollView contentContainerStyle={styles.content}>
         {/* Mini profile */}
         <View style={styles.profileCard}>
@@ -39,7 +43,14 @@ export default function MoreScreen({ navigation }) {
           <TouchableOpacity
             key={item.screen}
             style={styles.menuItem}
-            onPress={() => navigation.navigate(item.screen)}
+            onPress={() => {
+              // Check if it's a tab or a stack screen
+              if (['Tasks'].includes(item.screen)) {
+                navigation.navigate(item.screen);
+              } else {
+                navigation.navigate(item.screen);
+              }
+            }}
             activeOpacity={0.7}
           >
             <View style={styles.menuIcon}>
