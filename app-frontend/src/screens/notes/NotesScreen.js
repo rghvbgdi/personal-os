@@ -154,10 +154,8 @@ export default function NotesScreen() {
         transparent={true}
         onRequestClose={() => setModalVisible(false)}
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{editingNote ? 'Edit Note' : 'New Note'}</Text>
@@ -190,9 +188,9 @@ export default function NotesScreen() {
                 <Text style={styles.submitBtnText}>{editingNote ? 'Update Note' : 'Save Note'}</Text>
               </TouchableOpacity>
             </ScrollView>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+        </View>
+      </View>
+    </Modal>
     </SafeAreaView>
   );
 }

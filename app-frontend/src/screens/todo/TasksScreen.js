@@ -196,10 +196,8 @@ export default function TasksScreen() {
         transparent={true}
         onRequestClose={() => setModalVisible(false)}
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{editingTask ? 'Edit Task' : 'New Task'}</Text>
@@ -246,9 +244,9 @@ export default function TasksScreen() {
                 <Text style={styles.submitBtnText}>{editingTask ? 'Update Task' : 'Create Task'}</Text>
               </TouchableOpacity>
             </ScrollView>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+        </View>
+      </View>
+    </Modal>
     </SafeAreaView>
   );
 }

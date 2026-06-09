@@ -171,10 +171,8 @@ export default function CalendarScreen() {
         transparent={true}
         onRequestClose={() => setModalVisible(false)}
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{editingEvent ? 'Edit Event' : 'New Event'}</Text>
@@ -221,9 +219,9 @@ export default function CalendarScreen() {
                 <Text style={styles.submitBtnText}>{editingEvent ? 'Update Event' : 'Create Event'}</Text>
               </TouchableOpacity>
             </ScrollView>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+        </View>
+      </View>
+    </Modal>
     </SafeAreaView>
   );
 }

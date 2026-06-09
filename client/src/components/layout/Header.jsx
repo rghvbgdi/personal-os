@@ -1,8 +1,16 @@
-import { Menu, Zap } from 'lucide-react';
+import { Menu, Zap, ChevronLeft } from 'lucide-react';
 import { useSidebar } from '@/context/SidebarContext.jsx';
+import { useNavigate, useLocation } from 'react-router-dom';
+
+// Routes that are "root" pages — no back button shown
+const ROOT_PATHS = ['/dashboard', '/expenses', '/analytics', '/budget', '/goals', '/placement', '/notes', '/habits', '/', '/login', '/register'];
 
 export default function Header({ title, subtitle, actions }) {
   const { toggle } = useSidebar();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const showBack = !ROOT_PATHS.includes(location.pathname);
 
   return (
     <header
@@ -17,7 +25,7 @@ export default function Header({ title, subtitle, actions }) {
     >
       <div className="h-14 flex items-center justify-between px-4">
         {/* Left side */}
-        <div className="flex items-center gap-3 min-w-0 flex-1">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           {/* Hamburger — desktop only */}
           <button
             onClick={toggle}
@@ -27,10 +35,20 @@ export default function Header({ title, subtitle, actions }) {
             <Menu className="h-5 w-5" />
           </button>
 
-          {/* Mobile branding — compact logo */}
-          <div className="flex lg:hidden h-7 w-7 rounded-xl bg-[#059669] items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(5,150,105,0.25)]">
-            <Zap className="h-3.5 w-3.5 text-white" />
-          </div>
+          {/* Mobile: back button or logo */}
+          {showBack ? (
+            <button
+              onClick={() => navigate(-1)}
+              className="lg:hidden flex items-center justify-center h-8 w-8 rounded-xl bg-[#1a1a1a] text-[#888] hover:text-white transition-colors touch-manipulation flex-shrink-0"
+              aria-label="Go back"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+          ) : (
+            <div className="flex lg:hidden h-7 w-7 rounded-xl bg-[#059669] items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(5,150,105,0.25)]">
+              <Zap className="h-3.5 w-3.5 text-white" />
+            </div>
+          )}
 
           <div className="min-w-0 flex-1">
             {title && (

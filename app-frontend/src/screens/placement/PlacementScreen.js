@@ -185,10 +185,8 @@ export default function PlacementScreen() {
         transparent={true}
         onRequestClose={() => setModalVisible(false)}
       >
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.modalOverlay}
-        >
+        <View style={styles.modalOverlay}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{editingTopic ? 'Edit Topic' : 'Add Topic'}</Text>
@@ -237,9 +235,9 @@ export default function PlacementScreen() {
                 <Text style={styles.submitBtnText}>{editingTopic ? 'Update Topic' : 'Add Topic'}</Text>
               </TouchableOpacity>
             </ScrollView>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
+        </View>
+      </View>
+    </Modal>
     </SafeAreaView>
   );
 }

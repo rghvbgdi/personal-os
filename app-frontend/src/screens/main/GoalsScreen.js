@@ -126,7 +126,7 @@ function AddGoalModal({ visible, onClose, onSuccess, initialData }) {
             {saving ? <ActivityIndicator color={colors.accent} /> : <Text style={styles.modalSave}>Save</Text>}
           </TouchableOpacity>
         </View>
-        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
           <ScrollView contentContainerStyle={styles.modalBody} keyboardShouldPersistTaps="handled">
             <Text style={styles.fieldLabel}>Goal Title</Text>
             <TextInput style={styles.input} value={form.title} onChangeText={(v) => set('title', v)}
@@ -163,9 +163,8 @@ function AddGoalModal({ visible, onClose, onSuccess, initialData }) {
               </TouchableOpacity>
             )}
           </ScrollView>
-        </KeyboardAvoidingView>
-      </View>
-    </Modal>
+        </View>
+      </Modal>
   );
 }
 
