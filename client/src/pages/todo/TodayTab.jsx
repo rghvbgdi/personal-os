@@ -252,12 +252,9 @@ export default function TodayTab() {
 
   return (
     <PageLayout title="Today" subtitle={format(now, 'EEEE, d MMMM')}>
-      <div
-        className="px-4 pb-8"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 16px)' }}
-      >
+      <div className="pb-8">
         {/* ── Header ── */}
-        <div className="mb-5">
+        <div className="mb-5 mt-2">
           <h1 className="text-xl font-bold text-[#f0f0f0] leading-tight">
             {greeting()}, {user?.name?.split(' ')[0] || 'Raghav'} 👋
           </h1>

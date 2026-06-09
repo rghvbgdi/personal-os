@@ -22,10 +22,11 @@ export default function PageLayout({ title, subtitle, actions, action, children 
         <Header title={title} subtitle={subtitle} actions={headerActions} />
 
         <main
-          className="flex-1 overflow-y-auto overflow-x-hidden scroll-ios"
+          className="flex-1 overflow-y-auto overflow-x-hidden scroll-ios flex flex-col"
           style={{
             WebkitOverflowScrolling: 'touch',
-            paddingBottom: 'calc(env(safe-area-inset-bottom) + 80px)',
+            /* iPhone 14 Pro bottom nav + safe area compensation */
+            paddingBottom: 'calc(env(safe-area-inset-bottom) + 56px)',
           }}
         >
           <motion.div
@@ -34,7 +35,7 @@ export default function PageLayout({ title, subtitle, actions, action, children 
             animate="animate"
             exit="exit"
             transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-            className="p-4 max-w-2xl mx-auto w-full"
+            className="p-4 max-w-2xl mx-auto w-full flex-1 flex flex-col"
           >
             {children}
           </motion.div>
