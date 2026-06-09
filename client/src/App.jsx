@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import ProtectedRoute from './components/layout/ProtectedRoute.jsx';
@@ -20,6 +21,19 @@ import TodoModule from './pages/todo/TodoModule.jsx';
 import { ROUTES } from './constants/index.js';
 
 export default function App() {
+  // Global fix for iOS Safari Keyboard Bug
+  // When an input loses focus (keyboard dismisses), iOS often leaves a black void.
+  // This forces the viewport to perfectly reset to 0,0.
+  useEffect(() => {
+    const handleFocusOut = () => {
+      setTimeout(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }, 10);
+    };
+    document.addEventListener('focusout', handleFocusOut);
+    return () => document.removeEventListener('focusout', handleFocusOut);
+  }, []);
+
   return (
     <>
       {/* Global overlays */}

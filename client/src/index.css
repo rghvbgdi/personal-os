@@ -15,22 +15,21 @@ html, body {
   height: 100%;
   width: 100%;
   overflow: hidden; /* Lock the root to prevent bounce */
-  position: fixed; /* Prevent rubber-banding on iOS */
   overscroll-behavior: none;
+  background-color: #000000; /* Deepest black for iPhone 14 Pro OLED */
 }
 
 body {
-  background-color: #000000; /* Deepest black for iPhone 14 Pro OLED */
   color: #ffffff;
   font-family: 'Inter', sans-serif;
 }
 
 #root {
   height: 100%;
-  height: 100dvh; /* Dynamic viewport height */
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* ─── Prevent iOS text-size adjustment ───────────────────────────────── */
