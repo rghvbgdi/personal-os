@@ -12,8 +12,6 @@ import { useAuth } from '@/context/AuthContext.jsx';
 import { ROUTES } from '@/constants/index.js';
 import toast from 'react-hot-toast';
 
-// ── Tab Definitions for each context ──
-
 const EXPENSE_TABS = [
   { icon: LayoutDashboard, label: 'Home',      to: ROUTES.DASHBOARD },
   { icon: Wallet,          label: 'Expenses',  to: ROUTES.EXPENSES  },
@@ -34,33 +32,28 @@ const PLACEMENT_TABS = [
   { icon: Zap,             label: 'Habits',    to: ROUTES.HABITS },
 ];
 
-// ── Global Module Switcher Data ──
-
 const MODULES = [
-  { 
-    id: 'expense', 
-    label: 'Expense Tracker', 
-    icon: Wallet, 
-    to: ROUTES.DASHBOARD, 
-    color: 'from-emerald-500 to-teal-600', 
+  {
+    id: 'expense',
+    label: 'Expense Tracker',
+    icon: Wallet,
+    to: ROUTES.DASHBOARD,
     bg: 'bg-emerald-500/10',
     text: 'text-emerald-400'
   },
-  { 
-    id: 'todo', 
-    label: 'Todo List', 
-    icon: CheckSquare, 
-    to: ROUTES.TODO_TODAY, 
-    color: 'from-blue-500 to-indigo-600', 
+  {
+    id: 'todo',
+    label: 'Todo List',
+    icon: CheckSquare,
+    to: ROUTES.TODO_TODAY,
     bg: 'bg-blue-500/10',
     text: 'text-blue-400'
   },
-  { 
-    id: 'placement', 
-    label: 'Placement Hub', 
-    icon: Code2, 
-    to: ROUTES.PLACEMENT, 
-    color: 'from-purple-500 to-pink-600', 
+  {
+    id: 'placement',
+    label: 'Placement Hub',
+    icon: Code2,
+    to: ROUTES.PLACEMENT,
     bg: 'bg-purple-500/10',
     text: 'text-purple-400'
   },
@@ -72,13 +65,11 @@ export default function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Detect current context
   const context = useMemo(() => {
     const path = location.pathname;
     if (path.startsWith('/todo')) return 'todo';
     if (path.startsWith('/placement') || path.startsWith('/notes') || path.startsWith('/habits')) return 'placement';
-    if (['/dashboard', '/expenses', '/analytics', '/budget'].some(p => path.startsWith(path))) return 'expense';
-    return 'expense'; // Default
+    return 'expense';
   }, [location.pathname]);
 
   const activeTabs = useMemo(() => {
@@ -102,19 +93,24 @@ export default function BottomNav() {
   return (
     <>
       {/*
-        FULLY OPAQUE background (#000000 not bg-black/80) is critical.
-        bg-black/80 is 80% opaque — any gap or void in the layout behind
-        it shows through as a dark artifact. bg-black = 100% opaque, no leak.
+        position: fixed; bottom: 0 — positions nav at the visual viewport bottom.
         
-        `fixed bottom-0 left-0 right-0` positions the nav at the true
-        visual viewport bottom. `paddingBottom: env(safe-area-inset-bottom)`
-        extends the background colour into the home-indicator zone (~34px).
+        paddingBottom: env(safe-area-inset-bottom, 34px)
+          - The fallback 34px ensures the home indicator area is always covered
+            even if env() hasn't resolved yet on first paint.
+          - On iPhone 14 Pro: ~34px covers the home indicator.
+          - The nav background (solid #000000) fills this entire area,
+            so there is NO visible gap between nav and screen edge.
+        
+        background: #000000 (fully opaque)
+          - Prevents any bleed-through from content behind the nav.
       */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/5"
+        className="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
         style={{
           background: '#000000',
-          paddingBottom: 'env(safe-area-inset-bottom)',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          paddingBottom: 'env(safe-area-inset-bottom, 34px)',
         }}
       >
         <div className="flex items-stretch h-14">
@@ -141,7 +137,6 @@ export default function BottomNav() {
             );
           })}
 
-          {/* Premium 'More' Button */}
           <button
             onClick={() => setSwitcherOpen(true)}
             className={cn(
@@ -158,7 +153,6 @@ export default function BottomNav() {
         </div>
       </nav>
 
-      {/* ── Global Module Switcher (The Instagram "More" Hub) ── */}
       <AnimatePresence>
         {switcherOpen && (
           <>
@@ -177,10 +171,10 @@ export default function BottomNav() {
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="fixed inset-x-0 bottom-0 z-50 bg-[#0f0f0f] border-t border-white/10 rounded-t-[40px] px-6 pt-4 lg:hidden"
-              style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)' }}
+              style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 34px) + 24px)' }}
             >
               <div className="w-12 h-1 bg-zinc-800 rounded-full mx-auto mb-8" />
-              
+
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-black text-white tracking-tight">Personal OS</h2>
                 <button
@@ -198,7 +192,7 @@ export default function BottomNav() {
                     onClick={() => navigateTo(m.to)}
                     className="w-full group relative flex items-center gap-4 p-4 rounded-3xl bg-zinc-900/50 border border-white/5 active:scale-[0.98] transition-all"
                   >
-                    <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-colors", m.bg)}>
+                    <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center', m.bg)}>
                       <m.icon size={24} className={m.text} />
                     </div>
                     <div className="flex-1 text-left">

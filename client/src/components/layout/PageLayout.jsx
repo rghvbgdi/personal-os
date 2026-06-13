@@ -14,12 +14,18 @@ export default function PageLayout({ title, subtitle, actions, action, children 
 
   return (
     /*
-      `fixed inset-0` = position:fixed; top:0; right:0; bottom:0; left:0
-      This pins the layout to the exact visual viewport — identical to the
-      original working commit (7f58740). Combined with `position:fixed` on
-      html/body in index.css, this is the proven iOS PWA layout pattern.
+      Using var(--app-height) set by window.innerHeight in main.jsx.
+      This is the most reliable approach for iOS PWA — no position:fixed
+      on the container, no fixed inset-0, just a flex column that fills
+      the exact measured screen height.
+      
+      The BottomNav (fixed bottom-0) floats above this container.
+      The <main> has paddingBottom to ensure content scrolls above the nav.
     */
-    <div className="fixed inset-0 flex flex-col bg-black overflow-hidden select-none">
+    <div
+      className="flex flex-col bg-black overflow-hidden select-none"
+      style={{ height: 'var(--app-height, 100dvh)' }}
+    >
       {/* Sidebar — desktop only */}
       <Sidebar />
 
@@ -31,8 +37,14 @@ export default function PageLayout({ title, subtitle, actions, action, children 
           className="flex-1 overflow-y-auto overflow-x-hidden scroll-ios"
           style={{
             WebkitOverflowScrolling: 'touch',
-            /* 80px = nav bar (56px) + extra buffer. Safe-area adds home indicator space. */
-            paddingBottom: 'calc(env(safe-area-inset-bottom) + 80px)',
+            overscrollBehavior: 'contain',
+            /* 
+              Pad bottom so content scrolls above the fixed nav:
+              56px (nav height) + env(safe-area-inset-bottom) (~34px on iPhone 14 Pro)
+              + 8px breathing room = ~98px total.
+              We use 34px as fallback in case env() isn't available.
+            */
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 34px) + 64px)',
           }}
         >
           <motion.div
@@ -48,7 +60,7 @@ export default function PageLayout({ title, subtitle, actions, action, children 
         </main>
       </div>
 
-      {/* Bottom nav — fixed to viewport bottom, mobile only */}
+      {/* Bottom nav — fixed to viewport bottom (mobile only) */}
       <BottomNav />
     </div>
   );

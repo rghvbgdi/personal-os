@@ -10,6 +10,31 @@ import { PomodoroProvider } from './context/PomodoroContext.jsx';
 import App from './App.jsx';
 import './index.css';
 
+// ─── iOS PWA Viewport Height Fix ────────────────────────────────────────────
+// window.innerHeight is the ONLY reliable source of true viewport height on
+// iOS Safari / PWA home screen. CSS units (100vh, 100dvh, 100svh) can all
+// miscalculate on iOS, especially with the Dynamic Island and home indicator.
+// We measure once on load and set it as a CSS variable used by #root.
+function setAppHeight() {
+  document.documentElement.style.setProperty(
+    '--app-height',
+    `${window.innerHeight}px`
+  );
+}
+
+// Set immediately on script load
+setAppHeight();
+
+// Also re-set after a short delay in case iOS hasn't fully initialized the viewport
+setTimeout(setAppHeight, 100);
+setTimeout(setAppHeight, 500);
+
+// Update on orientation change (e.g. rotating device, though app is portrait-locked)
+window.addEventListener('orientationchange', () => {
+  setTimeout(setAppHeight, 300);
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 
 const queryClient = new QueryClient({
   defaultOptions: {

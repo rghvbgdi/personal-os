@@ -8,44 +8,47 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+  /* Fallback height — overwritten by JS in main.jsx with real window.innerHeight */
+  --app-height: 100dvh;
 }
 
-/* ─── The ONLY reliable way to lock iOS Safari/PWA to the screen ─────── */
+/* ─── CRITICAL: Do NOT use position:fixed on html/body ───────────────── */
 /*
-   position: fixed on html+body is the battle-tested iOS pattern.
-   It prevents rubber-banding AND locks the viewport to exactly the
-   visible screen area. Without it, 100vh/dvh can be taller than
-   the screen on iPhone (causing the black void below nav).
+   position:fixed on html or body causes iOS Safari to recompute the fixed
+   positioning containing block, which can break env(safe-area-inset-bottom)
+   and cause fixed children (like bottom nav) to sit above the physical screen
+   bottom — leaving a black void below the nav bar.
+   
+   Instead we use height:100% + overflow:hidden which correctly fills the
+   viewport without interfering with safe-area-inset calculations.
 */
-html, body {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+html {
+  height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   background-color: #000000;
 }
 
 body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background-color: #000000;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
-  width: 100%;
-  height: 100%;
 }
 
 #root {
+  /* var(--app-height) is set by JS to window.innerHeight — the most reliable
+     source of viewport height on iOS Safari PWA. Falls back to 100dvh. */
+  height: var(--app-height, 100dvh);
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-/* ─── Prevent iOS text-size adjustment ───────────────────────────────── */
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  overflow: hidden;
 }
 
 /* ─── Remove tap highlight on iOS ────────────────────────────────────── */
@@ -60,7 +63,6 @@ button, a {
 }
 
 /* ─── Better input styling on iOS (prevent zoom on focus) ────────────── */
-/* ALL input types must be ≥16px to prevent iOS zoom */
 input,
 select,
 textarea {
@@ -83,8 +85,7 @@ textarea {
   .stat-card {
     @apply rounded-3xl bg-surface border border-border p-5 shadow-sm;
   }
-  
-  /* Smooth momentum scrolling on iOS */
+
   .scroll-ios {
     -webkit-overflow-scrolling: touch;
     overflow-y: auto;
