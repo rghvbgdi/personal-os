@@ -10,23 +10,21 @@
   --safe-right: env(safe-area-inset-right, 0px);
 }
 
-/* ─── Height Strategy ────────────────────────────────────────────────── */
+/* ─── Height Strategy: position:fixed for Bulletproof iOS Coverage ──── */
 /*
-   We use a pure CSS approach: html + body at 100% height, #root at 100%.
-   This is the most reliable chain for iOS Safari standalone PWA mode.
+   On iOS Safari standalone PWA with viewport-fit=cover:
+   - height:100% resolves to the SAFE AREA height (excludes home indicator)
+   - 100vh / 100dvh can also miscalculate, excluding the bottom chin
+   - position:fixed + inset:0 is the ONLY reliable way to span the
+     full physical viewport including the home indicator area.
    
-   Why NOT use 100dvh or a JS window.innerHeight hack:
-   - 100dvh can miscalculate on iOS with Dynamic Island / home indicator
-   - window.innerHeight underreports in standalone mode, leaving a gap
-   - The 100% chain inherits from the actual viewport provided by iOS,
-     which always equals the FULL physical screen area in standalone mode.
-   
-   The BottomNav is a FLEX CHILD (not position:fixed) so it sits at the
-   bottom of the flex column. Its paddingBottom covers the home indicator
-   safe area, and its background fills to the screen edge. No gap possible.
+   html/body: background #000 fills the entire physical screen.
+   #root: fixed to all edges, becomes the app container.
+   BottomNav: flex child with paddingBottom:env(safe-area-inset-bottom)
+   to push tap targets above the home indicator while its #000 background
+   covers the chin area. No gap physically possible.
 */
 html {
-  height: 100%;
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
@@ -35,8 +33,8 @@ html {
 }
 
 body {
-  height: 100%;
-  width: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   overscroll-behavior: none;
   background-color: #000000;
@@ -45,8 +43,11 @@ body {
 }
 
 #root {
-  height: 100%;
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
