@@ -2,81 +2,111 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── iOS / Mobile safe area support ─────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────────────────────
+   iOS PWA LAYOUT FIX — iPhone 14 Pro (and all iPhones)
+   
+   THE PROBLEM:
+   When a web app is added to home screen on iOS (PWA mode with black-translucent
+   status bar), the browser reports viewport height incorrectly. The body/html
+   height ends up LARGER than the visible area, causing a black void below the
+   bottom nav bar.
+
+   THE SOLUTION:
+   1. Use `-webkit-fill-available` which is iOS Safari's native "fill the screen
+      exactly" unit — it accounts for the Dynamic Island, status bar, and home
+      indicator correctly.
+   2. The BottomNav uses `position: fixed; bottom: 0` so it's always at the
+      true visual viewport bottom.
+   3. The nav background must be FULLY OPAQUE (not transparent) so no black
+      shows through it.
+   4. Content padding-bottom = nav height + safe area so nothing is clipped.
+   ───────────────────────────────────────────────────────────────────────────── */
+
 :root {
-  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-top:    env(safe-area-inset-top,    0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --safe-left: env(safe-area-inset-left, 0px);
-  --safe-right: env(safe-area-inset-right, 0px);
-  /* Bottom nav height (56px) + safe area inset — used to pad scroll content */
+  --safe-left:   env(safe-area-inset-left,   0px);
+  --safe-right:  env(safe-area-inset-right,  0px);
+
+  /* Total height the fixed bottom nav occupies (tab bar + home indicator) */
   --bottom-nav-height: calc(56px + env(safe-area-inset-bottom, 0px));
 }
 
-/* ─── Prevent iOS bounce / overscroll on body ─────────────────────────── */
-html, body {
-  /* svh = small viewport height — excludes the iOS browser chrome / home indicator.
-     This is the MOST reliable unit for iOS PWA added-to-home-screen.
-     On iPhone 14 Pro: prevents content from extending into home-indicator zone. */
-  height: 100svh;
-  height: 100dvh; /* Dynamic viewport — better for desktop browsers, overrides svh if supported */
+/* ─── Step 1: Lock html/body to the exact visible viewport ──────────────── */
+html {
+  /* -webkit-fill-available is the KEY unit for iOS Safari/PWA.
+     It fills EXACTLY the visible screen — no overflow, no underflow.
+     Fallback chain: fill-available → 100dvh → 100vh */
+  height: -webkit-fill-available;
+  height: fill-available;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
   overscroll-behavior: none;
-  background-color: #000000; /* Deepest black for iPhone 14 Pro OLED */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background-color: #000000;
 }
 
 body {
+  /* Must also use -webkit-fill-available so body matches html exactly */
+  min-height: -webkit-fill-available;
+  min-height: fill-available;
+  min-height: 100dvh;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background-color: #000000;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
-  /* Ensure body fills exactly the viewport — no more, no less */
-  height: 100%;
-  overflow: hidden;
 }
 
+/* ─── Step 2: Root fills body exactly — NO position:fixed on root ──────── */
 #root {
+  /* 
+    IMPORTANT: Do NOT use `position: fixed` here.
+    On iOS Safari, fixed positioning on the root breaks the layout engine.
+    Instead, make #root fill body using height: 100%.
+    Body is already constrained to -webkit-fill-available.
+  */
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
-  /* On iOS PWA: the root should never extend beyond the visual viewport */
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  background-color: #000000;
 }
 
-/* ─── Prevent iOS text-size adjustment ───────────────────────────────── */
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
-/* ─── Remove tap highlight on iOS ────────────────────────────────────── */
+/* ─── Remove tap highlight on iOS ────────────────────────────────────────── */
 * {
   -webkit-tap-highlight-color: transparent;
   outline: none !important;
+  box-sizing: border-box;
 }
 
-/* ─── Prevent double-tap zoom on interactive elements ────────────────── */
+/* ─── Prevent double-tap zoom on interactive elements ────────────────────── */
 button, a {
   touch-action: manipulation;
 }
 
-/* ─── Better input styling on iOS (prevent zoom on focus) ────────────── */
-/* ALL input types must be ≥16px to prevent iOS zoom */
+/* ─── Prevent iOS zoom on input focus (must be ≥16px) ───────────────────── */
 input,
 select,
 textarea {
   font-size: 16px !important;
 }
 
-/* ─── Hide scrollbars on mobile ──────────────────────────────────────── */
+/* ─── Hide scrollbars on mobile ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
   ::-webkit-scrollbar { display: none; }
   * { scrollbar-width: none; }
+}
+
+/* ─── Prevent iOS bounce / overscroll ───────────────────────────────────── */
+html, body {
+  overscroll-behavior: none;
 }
 
 @layer base {
@@ -89,7 +119,7 @@ textarea {
   .stat-card {
     @apply rounded-3xl bg-surface border border-border p-5 shadow-sm;
   }
-  
+
   /* Smooth momentum scrolling on iOS */
   .scroll-ios {
     -webkit-overflow-scrolling: touch;
