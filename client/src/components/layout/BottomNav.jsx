@@ -101,9 +101,22 @@ export default function BottomNav() {
 
   return (
     <>
+      {/*
+        ── Fixed-position bottom nav ─ mobile only ──────────────────────────────
+        KEY FIX: `fixed bottom-0` means this nav is ALWAYS positioned relative to
+        the visual viewport, not the document flow. This eliminates the empty space
+        that appeared when using flex-sibling + mt-auto on iOS PWA (home screen app).
+
+        On iPhone 14 Pro in PWA mode:
+        - The visual viewport bottom = 0
+        - env(safe-area-inset-bottom) ≈ 34px (home indicator height)
+        - paddingBottom ensures content isn't hidden behind the home indicator
+        - The black area below the nav no longer exists because fixed elements
+          are clipped to the viewport boundary
+      */}
       <nav
-        className="lg:hidden flex-shrink-0 w-full z-40 bg-black/80 backdrop-blur-3xl border-t border-white/5 mt-auto"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+        className="lg:hidden fixed left-0 right-0 bottom-0 z-40 bg-black/80 backdrop-blur-3xl border-t border-white/5"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         <div className="flex items-stretch h-14">
           {activeTabs.map(({ icon: Icon, label, to }) => {
@@ -164,7 +177,8 @@ export default function BottomNav() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed inset-x-0 bottom-0 z-50 bg-[#0f0f0f] border-t border-white/10 rounded-t-[40px] px-6 pb-12 pt-4 lg:hidden"
+              className="fixed inset-x-0 bottom-0 z-50 bg-[#0f0f0f] border-t border-white/10 rounded-t-[40px] px-6 pt-4 lg:hidden"
+              style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)' }}
             >
               <div className="w-12 h-1 bg-zinc-800 rounded-full mx-auto mb-8" />
               

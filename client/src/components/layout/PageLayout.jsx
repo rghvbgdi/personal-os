@@ -13,15 +13,32 @@ export default function PageLayout({ title, subtitle, actions, action, children 
   const headerActions = actions || action;
 
   return (
+    /*
+      KEY FIX: The outer container is `fixed inset-0` matching the #root which is
+      also `position: fixed; inset: 0`. This means content is always constrained
+      to the EXACT visual viewport — no overhang below the home indicator on iOS PWA.
+
+      Since BottomNav is now `position: fixed; bottom: 0`, it doesn't occupy flex
+      space here. The `<main>` gets `paddingBottom: var(--bottom-nav-height)` so
+      scrollable content is not clipped behind the fixed nav bar.
+    */
     <div className="h-full min-h-0 flex flex-col bg-black overflow-hidden select-none">
       {/* Sidebar — desktop only */}
       <Sidebar />
 
-      {/* Main content column */}
+      {/* Main content column — fills all space above where the fixed nav will sit */}
       <div className="flex flex-col flex-1 min-h-0 relative">
         <Header title={title} subtitle={subtitle} actions={headerActions} />
 
-        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-ios flex flex-col">
+        {/*
+          overflow-y-auto: scrollable content area
+          paddingBottom = var(--bottom-nav-height): ensures last item isn't hidden
+          behind the fixed BottomNav (56px bar + safe-area-inset-bottom)
+        */}
+        <main
+          className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-ios flex flex-col"
+          style={{ paddingBottom: 'var(--bottom-nav-height)' }}
+        >
           <motion.div
             variants={pageVariants}
             initial="initial"
@@ -35,7 +52,7 @@ export default function PageLayout({ title, subtitle, actions, action, children 
         </main>
       </div>
 
-      {/* Bottom nav — mobile only */}
+      {/* Bottom nav — fixed to viewport bottom (mobile only) */}
       <BottomNav />
     </div>
   );

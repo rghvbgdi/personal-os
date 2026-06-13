@@ -8,13 +8,19 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+  /* Bottom nav height (56px) + safe area inset — used to pad scroll content */
+  --bottom-nav-height: calc(56px + env(safe-area-inset-bottom, 0px));
 }
 
 /* ─── Prevent iOS bounce / overscroll on body ─────────────────────────── */
 html, body {
-  height: 100%;
+  /* svh = small viewport height — excludes the iOS browser chrome / home indicator.
+     This is the MOST reliable unit for iOS PWA added-to-home-screen.
+     On iPhone 14 Pro: prevents content from extending into home-indicator zone. */
+  height: 100svh;
+  height: 100dvh; /* Dynamic viewport — better for desktop browsers, overrides svh if supported */
   width: 100%;
-  overflow: hidden; /* Lock the root to prevent bounce */
+  overflow: hidden;
   overscroll-behavior: none;
   background-color: #000000; /* Deepest black for iPhone 14 Pro OLED */
 }
@@ -22,16 +28,24 @@ html, body {
 body {
   color: #ffffff;
   font-family: 'Inter', sans-serif;
+  /* Ensure body fills exactly the viewport — no more, no less */
+  height: 100%;
+  overflow: hidden;
 }
 
 #root {
   height: 100%;
-  height: 100dvh;
   width: 100%;
   display: flex;
   flex-direction: column;
   min-height: 0;
   overflow: hidden;
+  /* On iOS PWA: the root should never extend beyond the visual viewport */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 /* ─── Prevent iOS text-size adjustment ───────────────────────────────── */
