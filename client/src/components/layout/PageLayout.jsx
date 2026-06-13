@@ -13,7 +13,7 @@ export default function PageLayout({ title, subtitle, actions, action, children 
   const headerActions = actions || action;
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-black overflow-hidden select-none">
+    <div className="h-full min-h-0 flex flex-col bg-black overflow-hidden select-none">
       {/* Sidebar — desktop only */}
       <Sidebar />
 
@@ -21,14 +21,7 @@ export default function PageLayout({ title, subtitle, actions, action, children 
       <div className="flex flex-col flex-1 min-h-0 relative">
         <Header title={title} subtitle={subtitle} actions={headerActions} />
 
-        <main
-          className="flex-1 overflow-y-auto overflow-x-hidden scroll-ios flex flex-col"
-          style={{
-            WebkitOverflowScrolling: 'touch',
-            /* iPhone 14 Pro bottom nav + safe area compensation */
-            paddingBottom: 'calc(env(safe-area-inset-bottom) + 56px)',
-          }}
-        >
+        <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scroll-ios flex flex-col">
           <motion.div
             variants={pageVariants}
             initial="initial"

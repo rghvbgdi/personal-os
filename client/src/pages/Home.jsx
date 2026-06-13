@@ -61,7 +61,7 @@ export default function Home() {
 
   return (
     <div
-      className="fixed inset-0 flex flex-col bg-black overflow-y-auto overflow-x-hidden scroll-ios"
+      className="h-full min-h-0 flex flex-col bg-black overflow-y-auto overflow-x-hidden scroll-ios"
       style={{
         paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
         paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)',
