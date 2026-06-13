@@ -14,18 +14,14 @@ export default function PageLayout({ title, subtitle, actions, action, children 
 
   return (
     /*
-      Using var(--app-height) set by window.innerHeight in main.jsx.
-      This is the most reliable approach for iOS PWA — no position:fixed
-      on the container, no fixed inset-0, just a flex column that fills
-      the exact measured screen height.
+      The outer div fills 100% of #root (which is 100% of body → html → viewport).
+      flex-col layout: Header → scrollable main → BottomNav.
       
-      The BottomNav (fixed bottom-0) floats above this container.
-      The <main> has paddingBottom to ensure content scrolls above the nav.
+      BottomNav is a FLEX CHILD (not position:fixed). It naturally sits at the
+      bottom. Its own paddingBottom covers the home indicator safe area.
+      The background extends to the absolute screen edge. No gap possible.
     */
-    <div
-      className="flex flex-col bg-black overflow-hidden select-none"
-      style={{ height: 'var(--app-height, 100dvh)' }}
-    >
+    <div className="flex flex-col h-full bg-black overflow-hidden select-none">
       {/* Sidebar — desktop only */}
       <Sidebar />
 
@@ -34,17 +30,10 @@ export default function PageLayout({ title, subtitle, actions, action, children 
         <Header title={title} subtitle={subtitle} actions={headerActions} />
 
         <main
-          className="flex-1 overflow-y-auto overflow-x-hidden scroll-ios"
+          className="flex-1 overflow-y-auto overflow-x-hidden scroll-ios min-h-0"
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
-            /* 
-              Pad bottom so content scrolls above the fixed nav:
-              56px (nav height) + env(safe-area-inset-bottom) (~34px on iPhone 14 Pro)
-              + 8px breathing room = ~98px total.
-              We use 34px as fallback in case env() isn't available.
-            */
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 34px) + 64px)',
           }}
         >
           <motion.div
@@ -60,7 +49,7 @@ export default function PageLayout({ title, subtitle, actions, action, children 
         </main>
       </div>
 
-      {/* Bottom nav — fixed to viewport bottom (mobile only) */}
+      {/* Bottom nav — flex child at the bottom (mobile only) */}
       <BottomNav />
     </div>
   );

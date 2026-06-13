@@ -8,19 +8,22 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
-  /* Fallback height — overwritten by JS in main.jsx with real window.innerHeight */
-  --app-height: 100dvh;
 }
 
-/* ─── CRITICAL: Do NOT use position:fixed on html/body ───────────────── */
+/* ─── Height Strategy ────────────────────────────────────────────────── */
 /*
-   position:fixed on html or body causes iOS Safari to recompute the fixed
-   positioning containing block, which can break env(safe-area-inset-bottom)
-   and cause fixed children (like bottom nav) to sit above the physical screen
-   bottom — leaving a black void below the nav bar.
+   We use a pure CSS approach: html + body at 100% height, #root at 100%.
+   This is the most reliable chain for iOS Safari standalone PWA mode.
    
-   Instead we use height:100% + overflow:hidden which correctly fills the
-   viewport without interfering with safe-area-inset calculations.
+   Why NOT use 100dvh or a JS window.innerHeight hack:
+   - 100dvh can miscalculate on iOS with Dynamic Island / home indicator
+   - window.innerHeight underreports in standalone mode, leaving a gap
+   - The 100% chain inherits from the actual viewport provided by iOS,
+     which always equals the FULL physical screen area in standalone mode.
+   
+   The BottomNav is a FLEX CHILD (not position:fixed) so it sits at the
+   bottom of the flex column. Its paddingBottom covers the home indicator
+   safe area, and its background fills to the screen edge. No gap possible.
 */
 html {
   height: 100%;
@@ -42,9 +45,7 @@ body {
 }
 
 #root {
-  /* var(--app-height) is set by JS to window.innerHeight — the most reliable
-     source of viewport height on iOS Safari PWA. Falls back to 100dvh. */
-  height: var(--app-height, 100dvh);
+  height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;

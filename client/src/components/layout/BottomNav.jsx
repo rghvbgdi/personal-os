@@ -93,24 +93,27 @@ export default function BottomNav() {
   return (
     <>
       {/*
-        position: fixed; bottom: 0 — positions nav at the visual viewport bottom.
+        BottomNav is a FLEX CHILD of the PageLayout flex column — NOT position:fixed.
         
-        paddingBottom: env(safe-area-inset-bottom, 34px)
-          - The fallback 34px ensures the home indicator area is always covered
-            even if env() hasn't resolved yet on first paint.
-          - On iPhone 14 Pro: ~34px covers the home indicator.
-          - The nav background (solid #000000) fills this entire area,
-            so there is NO visible gap between nav and screen edge.
+        flex-shrink-0 ensures it never collapses.
         
-        background: #000000 (fully opaque)
-          - Prevents any bleed-through from content behind the nav.
+        paddingBottom: env(safe-area-inset-bottom)
+          - Pushes the tap targets above the home indicator.
+          - The nav's background (#000000) fills this padding area,
+            covering all the way to the physical screen edge.
+          - On iPhone 14 Pro: ~34px for the home indicator.
+          - Result: NO gap below the nav. Zero. Ever.
+        
+        This approach is immune to viewport miscalculations because the nav
+        is part of the flex flow. It doesn't rely on position:fixed alignment,
+        which can drift when window.innerHeight or 100dvh is slightly off.
       */}
       <nav
-        className="fixed bottom-0 left-0 right-0 z-40 lg:hidden"
+        className="flex-shrink-0 z-40 lg:hidden"
         style={{
           background: '#000000',
           borderTop: '1px solid rgba(255,255,255,0.06)',
-          paddingBottom: 'env(safe-area-inset-bottom, 34px)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
         <div className="flex items-stretch h-14">
