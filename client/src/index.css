@@ -8,41 +8,35 @@
   --sab: env(safe-area-inset-bottom, 0px);
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
+  /* --app-height is set dynamically by JavaScript in index.html
+     to window.innerHeight — the ONLY reliable way to get the true
+     physical viewport height on iOS standalone PWA */
+  --app-height: 100vh; /* CSS fallback before JS runs */
 }
 
-/* ─── Height Strategy: 100% Chain ────────────────────────────────────── */
+/* ─── Height Strategy: JavaScript-driven var(--app-height) ────────── */
 /*
-   THE FIX (after 10+ failed attempts with position:fixed, 100vh, 100dvh,
-   -webkit-fill-available, window.innerHeight, etc.):
-
-   On iOS Safari standalone PWA with viewport-fit=cover:
-   - position:fixed with bottom:0 resolves to the SAFE AREA bottom,
-     NOT the physical screen edge. This causes the black chin gap.
-   - 100vh, 100dvh, -webkit-fill-available all have edge cases on iOS.
-
-   The ONLY approach that reliably spans the full physical viewport
-   (including the home indicator area) is:
-     html { height: 100% }
-     body { height: 100% }
-     #root { height: 100% }
+   WHY this approach:
+   - 100vh on iOS = includes the browser chrome area = TOO TALL
+   - 100dvh = dynamic, but behaves inconsistently in iOS standalone PWA
+   - 100% = depends on parent chain, unreliable in iOS standalone
+   - -webkit-fill-available = deprecated and inconsistent
+   - position:fixed inset:0 = resolves to safe area, NOT physical screen
    
-   With viewport-fit=cover in the meta tag, 100% height on this chain
-   resolves to the FULL PHYSICAL SCREEN including under the home indicator.
-   The BottomNav then uses padding-bottom: env(safe-area-inset-bottom) to
-   push interactive content above the home indicator, while its background
-   color (matching the body) fills the chin area seamlessly.
-
-   NO position:fixed. NO 100vh. NO JavaScript height hacks.
-   Just a clean percentage-based height chain.
+   window.innerHeight in iOS standalone PWA returns the EXACT pixel height
+   of the full physical viewport. We set it as a CSS variable and use it.
+   This is the nuclear option that bypasses all CSS unit inconsistencies.
 */
 
 html {
-  height: 100%;
+  height: var(--app-height);
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background: #000000;
+  margin: 0;
+  padding: 0;
 }
 
 body {

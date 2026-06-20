@@ -1,4 +1,4 @@
-const CACHE_NAME = 'personal-os-v7';
+const CACHE_NAME = 'personal-os-v9';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
