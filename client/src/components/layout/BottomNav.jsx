@@ -93,26 +93,21 @@ export default function BottomNav() {
   return (
     <>
       {/*
-        CRITICAL iOS PWA LAYOUT:
+        iOS PWA LAYOUT:
         
         This nav is a FLEX CHILD of the PageLayout flex column.
         NOT position:fixed. It naturally sits at the bottom.
         
-        The wrapper div has:
-        - background: #000000 (matches html/body/root — seamless)
-        - padding-bottom: env(safe-area-inset-bottom)
-        
-        Because the parent chain (html>body>#root) uses height:100%
-        (not position:fixed), the layout truly spans the full physical
-        viewport. The padding-bottom extends the black background into
-        the home indicator zone, eliminating any visible gap.
+        #root is position:fixed inset:0 — spans the full physical screen.
+        This nav's padding-bottom: env(safe-area-inset-bottom) extends
+        the background into the home indicator zone for a seamless look.
         
         flex-shrink-0 prevents it from being compressed.
       */}
       <div
         className="flex-shrink-0 lg:hidden"
         style={{
-          background: '#000000',
+          background: '#0a0a0a',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
@@ -154,7 +149,7 @@ export default function BottomNav() {
             >
               <div className="relative">
                 <Layout size={20} strokeWidth={switcherOpen ? 2.5 : 1.5} />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-500 rounded-full border-2 border-black" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-500 rounded-full border-2 border-[#0a0a0a]" />
               </div>
               <span className="text-[9px] font-bold tracking-tight uppercase opacity-80">More</span>
             </button>

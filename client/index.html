@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 
     <!-- PWA / Theme -->
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#0a0a0a" />
     <link rel="manifest" href="/manifest.json" />
 
     <!--
@@ -13,9 +13,8 @@
       We use env(safe-area-inset-top) in the Header to push content below the notch,
       and env(safe-area-inset-bottom) in the BottomNav to push above home indicator.
       
-      The critical viewport sizing is handled via CSS + a JS resize listener that
-      sets --app-height to window.innerHeight, which on iOS standalone gives the
-      exact pixel height of the usable area.
+      The layout uses position:fixed on #root to guarantee the app spans the
+      full physical screen. No JavaScript height hacks needed.
     -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -36,22 +35,6 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
-
-    <!--
-      CRITICAL: Set --app-height to window.innerHeight BEFORE React mounts.
-      On iOS standalone PWA, window.innerHeight returns the EXACT pixel height
-      of the full physical screen (including behind status bar and home indicator
-      when using viewport-fit=cover + black-translucent). This is more reliable
-      than any CSS unit (100vh, 100dvh, 100%, -webkit-fill-available) which all
-      have edge cases on iOS Safari.
-    -->
-    <script>
-      function setAppHeight() {
-        document.documentElement.style.setProperty('--app-height', window.innerHeight + 'px');
-      }
-      setAppHeight();
-      window.addEventListener('resize', setAppHeight);
-    </script>
   </head>
   <body>
     <div id="root"></div>

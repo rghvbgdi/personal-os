@@ -8,54 +8,73 @@
   --sab: env(safe-area-inset-bottom, 0px);
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
-  /* --app-height is set dynamically by JavaScript in index.html
-     to window.innerHeight — the ONLY reliable way to get the true
-     physical viewport height on iOS standalone PWA */
-  --app-height: 100vh; /* CSS fallback before JS runs */
 }
 
-/* ─── Height Strategy: JavaScript-driven var(--app-height) ────────── */
+/* ─── DEFINITIVE iOS PWA Full-Screen Strategy ────────────────────────── */
 /*
-   WHY this approach:
-   - 100vh on iOS = includes the browser chrome area = TOO TALL
-   - 100dvh = dynamic, but behaves inconsistently in iOS standalone PWA
-   - 100% = depends on parent chain, unreliable in iOS standalone
-   - -webkit-fill-available = deprecated and inconsistent
-   - position:fixed inset:0 = resolves to safe area, NOT physical screen
+   WHY position:fixed on #root:
    
-   window.innerHeight in iOS standalone PWA returns the EXACT pixel height
-   of the full physical viewport. We set it as a CSS variable and use it.
-   This is the nuclear option that bypasses all CSS unit inconsistencies.
+   On iOS Safari standalone (PWA), every CSS height unit is broken:
+   - 100vh = includes area behind browser chrome = TOO TALL in Safari, but
+     in standalone mode the size is unpredictable
+   - 100dvh = dynamic but inconsistent in standalone
+   - 100% = requires perfect parent chain, breaks with keyboard
+   - -webkit-fill-available = deprecated, inconsistent
+   - window.innerHeight = returns the SAFE area height, which with
+     viewport-fit=cover + black-translucent is SHORTER than the full
+     physical screen → causes the bottom black gap
+   
+   The ONLY approach that ALWAYS works:
+   position:fixed; inset:0 on #root.
+   
+   In iOS standalone mode, position:fixed elements are anchored to the
+   VISUAL VIEWPORT which is the full physical screen when using
+   viewport-fit=cover. This means #root will always stretch from the
+   very top to the very bottom pixel of the screen — no gap possible.
+   
+   The safe area insets (env()) handle keeping content away from the
+   notch and home indicator.
 */
 
 html {
-  height: var(--app-height);
+  /* Fill the entire screen with the app background color.
+     This ensures even if there's a rendering gap, it's the same color. */
+  background: #0a0a0a;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  background: #000000;
-  margin: 0;
-  padding: 0;
+  /* Use 100% — in standalone PWA, html fills the full viewport */
+  height: 100%;
 }
 
 body {
-  height: 100%;
+  background: #0a0a0a;
   margin: 0;
   padding: 0;
   overflow: hidden;
   overscroll-behavior: none;
-  background: #000000;
   color: #ffffff;
   font-family: 'Inter', system-ui, sans-serif;
+  /* Match html */
+  height: 100%;
+  width: 100%;
 }
 
+/* THE FIX: position:fixed inset:0 guarantees full physical screen coverage
+   on iOS standalone PWA with viewport-fit=cover */
 #root {
-  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #000000;
+  background: #0a0a0a;
 }
 
 /* ─── Remove tap highlight on iOS ────────────────────────────────────── */

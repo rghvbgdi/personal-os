@@ -63,7 +63,7 @@ export default function Home() {
     <div
       className="h-full flex flex-col overflow-y-auto overflow-x-hidden"
       style={{
-        background: '#000000',
+        background: '#0a0a0a',
         WebkitOverflowScrolling: 'touch',
         paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
         paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)',

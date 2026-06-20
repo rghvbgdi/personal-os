@@ -16,17 +16,17 @@ export default function PageLayout({ title, subtitle, actions, action, children 
     /*
       Layout strategy (iOS PWA compatible):
       
-      #root is height:100% (spans full physical viewport via html>body>root chain).
+      #root is position:fixed inset:0 — it spans the FULL physical viewport
+      on iOS standalone PWA (including behind status bar & home indicator).
       This outer div fills #root with flex-col.
       Children stack: [Sidebar(desktop)] [Header] [Main(scrollable)] [BottomNav].
       
       BottomNav is a flex child (NOT position:fixed). It sits at the bottom
       of the flex column. Its padding-bottom: env(safe-area-inset-bottom) pushes
       interactive elements above the home indicator while its background color
-      fills the chin area. Because we use height:100% (not position:fixed),
-      the container truly spans to the physical screen edge.
+      fills the home indicator zone seamlessly.
     */
-    <div className="flex h-full overflow-hidden select-none" style={{ background: '#000000' }}>
+    <div className="flex h-full overflow-hidden select-none" style={{ background: '#0a0a0a' }}>
       {/* Sidebar — desktop only */}
       <Sidebar />
 
