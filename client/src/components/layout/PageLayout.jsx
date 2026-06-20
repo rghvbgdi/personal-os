@@ -14,23 +14,28 @@ export default function PageLayout({ title, subtitle, actions, action, children 
 
   return (
     /*
-      The outer div fills 100% of #root (which is 100% of body → html → viewport).
-      flex-col layout: Header → scrollable main → BottomNav.
+      Layout strategy (iOS PWA compatible):
       
-      BottomNav is a FLEX CHILD (not position:fixed). It naturally sits at the
-      bottom. Its own paddingBottom covers the home indicator safe area.
-      The background extends to the absolute screen edge. No gap possible.
+      #root is height:100% (spans full physical viewport via html>body>root chain).
+      This outer div fills #root with flex-col.
+      Children stack: [Sidebar(desktop)] [Header] [Main(scrollable)] [BottomNav].
+      
+      BottomNav is a flex child (NOT position:fixed). It sits at the bottom
+      of the flex column. Its padding-bottom: env(safe-area-inset-bottom) pushes
+      interactive elements above the home indicator while its background color
+      fills the chin area. Because we use height:100% (not position:fixed),
+      the container truly spans to the physical screen edge.
     */
-    <div className="flex flex-col h-full bg-black overflow-hidden select-none">
+    <div className="flex h-full overflow-hidden select-none" style={{ background: '#000000' }}>
       {/* Sidebar — desktop only */}
       <Sidebar />
 
       {/* Main content column */}
-      <div className="flex flex-col flex-1 min-h-0 relative">
+      <div className="flex flex-col flex-1 min-w-0 min-h-0">
         <Header title={title} subtitle={subtitle} actions={headerActions} />
 
         <main
-          className="flex-1 overflow-y-auto overflow-x-hidden scroll-ios min-h-0"
+          className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
           style={{
             WebkitOverflowScrolling: 'touch',
             overscrollBehavior: 'contain',
@@ -47,10 +52,10 @@ export default function PageLayout({ title, subtitle, actions, action, children 
             {children}
           </motion.div>
         </main>
-      </div>
 
-      {/* Bottom nav — flex child at the bottom (mobile only) */}
-      <BottomNav />
+        {/* Bottom nav — flex child at the bottom (mobile only) */}
+        <BottomNav />
+      </div>
     </div>
   );
 }

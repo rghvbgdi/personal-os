@@ -61,10 +61,12 @@ export default function Home() {
 
   return (
     <div
-      className="h-full min-h-0 flex flex-col bg-black overflow-y-auto overflow-x-hidden scroll-ios"
+      className="h-full flex flex-col overflow-y-auto overflow-x-hidden"
       style={{
-        paddingTop: 'calc(env(safe-area-inset-top) + 24px)',
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 24px)',
+        background: '#000000',
+        WebkitOverflowScrolling: 'touch',
+        paddingTop: 'calc(env(safe-area-inset-top, 0px) + 24px)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)',
       }}
     >
       <div className="px-6 max-w-md mx-auto w-full flex-1 flex flex-col">

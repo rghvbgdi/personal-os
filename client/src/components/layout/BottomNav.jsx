@@ -93,68 +93,74 @@ export default function BottomNav() {
   return (
     <>
       {/*
-        BottomNav is a FLEX CHILD of the PageLayout flex column — NOT position:fixed.
+        CRITICAL iOS PWA LAYOUT:
         
-        flex-shrink-0 ensures it never collapses.
+        This nav is a FLEX CHILD of the PageLayout flex column.
+        NOT position:fixed. It naturally sits at the bottom.
         
-        paddingBottom: env(safe-area-inset-bottom)
-          - Pushes the tap targets above the home indicator.
-          - The nav's background (#000000) fills this padding area,
-            covering all the way to the physical screen edge.
-          - On iPhone 14 Pro: ~34px for the home indicator.
-          - Result: NO gap below the nav. Zero. Ever.
+        The wrapper div has:
+        - background: #000000 (matches html/body/root — seamless)
+        - padding-bottom: env(safe-area-inset-bottom)
         
-        This approach is immune to viewport miscalculations because the nav
-        is part of the flex flow. It doesn't rely on position:fixed alignment,
-        which can drift when window.innerHeight or 100dvh is slightly off.
+        Because the parent chain (html>body>#root) uses height:100%
+        (not position:fixed), the layout truly spans the full physical
+        viewport. The padding-bottom extends the black background into
+        the home indicator zone, eliminating any visible gap.
+        
+        flex-shrink-0 prevents it from being compressed.
       */}
-      <nav
-        className="flex-shrink-0 z-40 lg:hidden"
+      <div
+        className="flex-shrink-0 lg:hidden"
         style={{
           background: '#000000',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
-        <div className="flex items-stretch h-14">
-          {activeTabs.map(({ icon: Icon, label, to }) => {
-            const isActive = location.pathname === to;
-            return (
-              <button
-                key={to}
-                onClick={() => navigate(to)}
-                className={cn(
-                  'flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-200 relative',
-                  isActive ? 'text-white' : 'text-zinc-600'
-                )}
-              >
-                <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} className="transition-transform active:scale-90" />
-                <span className="text-[9px] font-bold tracking-tight uppercase opacity-80">{label}</span>
-                {isActive && (
-                  <motion.div
-                    layoutId="active-dot"
-                    className="absolute -top-px w-1 h-1 bg-white rounded-full shadow-[0_0_8px_white]"
-                  />
-                )}
-              </button>
-            );
-          })}
+        <div
+          style={{
+            borderTop: '1px solid rgba(255,255,255,0.06)',
+          }}
+        >
+          <div className="flex items-stretch h-14">
+            {activeTabs.map(({ icon: Icon, label, to }) => {
+              const isActive = location.pathname === to;
+              return (
+                <button
+                  key={to}
+                  onClick={() => navigate(to)}
+                  className={cn(
+                    'flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-200 relative',
+                    isActive ? 'text-white' : 'text-zinc-600'
+                  )}
+                >
+                  <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} className="transition-transform active:scale-90" />
+                  <span className="text-[9px] font-bold tracking-tight uppercase opacity-80">{label}</span>
+                  {isActive && (
+                    <motion.div
+                      layoutId="active-dot"
+                      className="absolute -top-px w-1 h-1 bg-white rounded-full shadow-[0_0_8px_white]"
+                    />
+                  )}
+                </button>
+              );
+            })}
 
-          <button
-            onClick={() => setSwitcherOpen(true)}
-            className={cn(
-              'flex-1 flex flex-col items-center justify-center gap-1 transition-colors',
-              switcherOpen ? 'text-white' : 'text-zinc-600'
-            )}
-          >
-            <div className="relative">
-              <Layout size={20} strokeWidth={switcherOpen ? 2.5 : 1.5} />
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-500 rounded-full border-2 border-black" />
-            </div>
-            <span className="text-[9px] font-bold tracking-tight uppercase opacity-80">More</span>
-          </button>
+            <button
+              onClick={() => setSwitcherOpen(true)}
+              className={cn(
+                'flex-1 flex flex-col items-center justify-center gap-1 transition-colors',
+                switcherOpen ? 'text-white' : 'text-zinc-600'
+              )}
+            >
+              <div className="relative">
+                <Layout size={20} strokeWidth={switcherOpen ? 2.5 : 1.5} />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-500 rounded-full border-2 border-black" />
+              </div>
+              <span className="text-[9px] font-bold tracking-tight uppercase opacity-80">More</span>
+            </button>
+          </div>
         </div>
-      </nav>
+      </div>
 
       <AnimatePresence>
         {switcherOpen && (
@@ -173,8 +179,12 @@ export default function BottomNav() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed inset-x-0 bottom-0 z-50 bg-[#0f0f0f] border-t border-white/10 rounded-t-[40px] px-6 pt-4 lg:hidden"
-              style={{ paddingBottom: 'calc(env(safe-area-inset-bottom, 34px) + 24px)' }}
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-[40px] px-6 pt-4 lg:hidden"
+              style={{
+                background: '#0f0f0f',
+                borderTop: '1px solid rgba(255,255,255,0.1)',
+                paddingBottom: 'calc(env(safe-area-inset-bottom, 34px) + 24px)',
+              }}
             >
               <div className="w-12 h-1 bg-zinc-800 rounded-full mx-auto mb-8" />
 
