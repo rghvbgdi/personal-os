@@ -12,11 +12,11 @@ export default {
         dvh: '100dvh',
       },
       colors: {
-        background: '#0a0a0a',
-        surface: '#171717',
-        'surface-2': '#1f1f1f',
-        border: '#262626',
-        'border-subtle': '#1c1c1c',
+        background: '#111111',
+        surface: '#1a1a1a',
+        'surface-2': '#212121',
+        border: '#2d2d2d',
+        'border-subtle': '#1e1e1e',
         accent: {
           DEFAULT: '#059669',
           hover: '#047857',
@@ -24,9 +24,9 @@ export default {
           muted: '#064e3b',
         },
         text: {
-          primary: '#fafafa',
-          secondary: '#a3a3a3',
-          muted: '#525252',
+          primary: '#ececec',
+          secondary: '#9a9a9a',
+          muted: '#5a5a5a',
         },
         danger: '#ef4444',
         warning: '#f59e0b',
@@ -50,11 +50,8 @@ export default {
         scaleIn: { from: { opacity: 0, transform: 'scale(0.95)' }, to: { opacity: 1, transform: 'scale(1)' } },
       },
       boxShadow: {
-        'glow-sm': '0 0 10px rgba(5, 150, 105, 0.15)',
-        'glow': '0 0 20px rgba(5, 150, 105, 0.2)',
-        'glow-lg': '0 0 40px rgba(5, 150, 105, 0.25)',
-        'elevated': '0 4px 24px rgba(0, 0, 0, 0.4)',
-        'card': '0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2)',
+        'elevated': '0 2px 8px rgba(0, 0, 0, 0.3)',
+        'card': 'none',
       },
       borderRadius: {
         xl: '12px',

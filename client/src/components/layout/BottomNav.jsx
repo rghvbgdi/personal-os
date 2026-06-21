@@ -127,7 +127,7 @@ export default function BottomNav() {
                     'flex items-center justify-center rounded-2xl transition-colors duration-200',
                     isActive ? 'bg-white/10' : ''
                   )}
-                  style={{ width: 48, height: 48 }}
+                  style={{ width: 48, height: 48, marginBottom: 10 }}
                   whileTap={{ scale: 0.88 }}
                 >
                   <Icon
@@ -150,7 +150,7 @@ export default function BottomNav() {
                 'flex items-center justify-center rounded-2xl transition-colors duration-200 relative',
                 switcherOpen ? 'bg-white/10' : ''
               )}
-              style={{ width: 48, height: 48 }}
+              style={{ width: 48, height: 48, marginBottom: 10 }}
               whileTap={{ scale: 0.88 }}
             >
               <Layout

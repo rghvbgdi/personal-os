@@ -72,6 +72,8 @@ export const eventApi = {
 
 export const sleepApi = {
   log: (data) => api.post('/sleep', data),
+  update: (id, data) => api.patch(`/sleep/${id}`, data),
+  delete: (id) => api.delete(`/sleep/${id}`),
   getLogs: (params) => api.get('/sleep', { params }),
   getInsights: () => api.get('/sleep/insights'),
 };

@@ -18,7 +18,7 @@
    and let iOS lay the app out inside the *safe* rectangle. Then a plain
    height:100% chain (html → body → #root) is EXACTLY the visible area —
    a gap is now physically impossible. iOS paints the home-indicator strip
-   and status-bar strip with the manifest background_color (#0a0a0a), so it
+   and status-bar strip with the manifest background_color (#111111), so it
    stays seamlessly black with no env() math required.
 */
 
@@ -27,7 +27,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100%;
-  background: #0a0a0a;
+  background: #111111;
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
@@ -44,7 +44,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  background: #0a0a0a;
+  background: #111111;
 }
 
 /* ─── Remove tap highlight on iOS ────────────────────────────────────── */

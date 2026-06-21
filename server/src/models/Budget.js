@@ -4,7 +4,7 @@ import { CATEGORIES } from './Expense.js';
 const budgetSchema = new mongoose.Schema(
   {
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    month: { type: Number, required: true, min: 1, max: 12 },
+    month: { type: Number, required: true, min: 0, max: 12 }, // 0 = yearly budget
     year: { type: Number, required: true },
     totalBudget: { type: Number, default: 0 },
     categories: [

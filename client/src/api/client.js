@@ -5,7 +5,14 @@ const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api/v1',
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },
+  // Render free tier cold starts can take 60-90s; give it room.
+  timeout: 100000,
 });
+
+// Fire a lightweight health-check on load to warm Render's free-tier dyno.
+// Runs silently in the background — errors are intentionally swallowed.
+const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
+axios.get(`${API_BASE}/health`, { timeout: 100000 }).catch(() => {});
 
 let isRefreshing = false;
 let failedQueue = [];

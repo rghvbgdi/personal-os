@@ -47,6 +47,42 @@ export const getSleepLogs = async (req, res, next) => {
   }
 };
 
+// ── Update Sleep Log ──────────────────────────────────────────────────────────
+export const updateSleep = async (req, res, next) => {
+  try {
+    const { sleepTime, wakeTime, quality, notes } = req.body;
+    const log = await SleepLog.findOne({ _id: req.params.id, user: req.user.id });
+    if (!log) return error(res, 'Sleep log not found', 404);
+
+    const sleepDate = new Date(sleepTime);
+    const wakeDate  = new Date(wakeTime);
+    const durationMinutes = Math.round((wakeDate - sleepDate) / 60000);
+    if (durationMinutes <= 0) return error(res, 'Wake time must be after sleep time', 400);
+
+    log.sleepTime = sleepDate;
+    log.wakeTime  = wakeDate;
+    log.durationMinutes = durationMinutes;
+    if (quality !== undefined) log.quality = quality;
+    if (notes   !== undefined) log.notes   = notes;
+    await log.save();
+
+    return success(res, { log }, 'Sleep log updated');
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ── Delete Sleep Log ──────────────────────────────────────────────────────────
+export const deleteSleep = async (req, res, next) => {
+  try {
+    const log = await SleepLog.findOneAndDelete({ _id: req.params.id, user: req.user.id });
+    if (!log) return error(res, 'Sleep log not found', 404);
+    return success(res, {}, 'Sleep log deleted');
+  } catch (err) {
+    next(err);
+  }
+};
+
 // ── Sleep Insights ─────────────────────────────────────────────────────────────
 export const getSleepInsights = async (req, res, next) => {
   try {
