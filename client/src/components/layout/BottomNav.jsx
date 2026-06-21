@@ -108,52 +108,59 @@ export default function BottomNav() {
         className="flex-shrink-0 lg:hidden"
         style={{
           background: '#0a0a0a',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
-        <div
-          style={{
-            borderTop: '1px solid rgba(255,255,255,0.06)',
-          }}
-        >
-          <div className="flex items-stretch h-14">
-            {activeTabs.map(({ icon: Icon, label, to }) => {
-              const isActive = location.pathname === to;
-              return (
-                <button
-                  key={to}
-                  onClick={() => navigate(to)}
+        <div className="flex items-center h-16 px-2">
+          {activeTabs.map(({ icon: Icon, label, to }) => {
+            const isActive = location.pathname === to;
+            return (
+              <button
+                key={to}
+                onClick={() => navigate(to)}
+                aria-label={label}
+                className="flex-1 flex items-center justify-center h-full touch-manipulation"
+              >
+                <motion.div
                   className={cn(
-                    'flex-1 flex flex-col items-center justify-center gap-1 transition-all duration-200 relative',
-                    isActive ? 'text-white' : 'text-zinc-600'
+                    'flex items-center justify-center rounded-2xl transition-colors duration-200',
+                    isActive ? 'bg-white/10' : ''
                   )}
+                  style={{ width: 48, height: 48 }}
+                  whileTap={{ scale: 0.88 }}
                 >
-                  <Icon size={20} strokeWidth={isActive ? 2.5 : 1.5} className="transition-transform active:scale-90" />
-                  <span className="text-[9px] font-bold tracking-tight uppercase opacity-80">{label}</span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="active-dot"
-                      className="absolute -top-px w-1 h-1 bg-white rounded-full shadow-[0_0_8px_white]"
-                    />
-                  )}
-                </button>
-              );
-            })}
+                  <Icon
+                    size={26}
+                    strokeWidth={isActive ? 2.5 : 1.8}
+                    className={isActive ? 'text-white' : 'text-zinc-500'}
+                  />
+                </motion.div>
+              </button>
+            );
+          })}
 
-            <button
-              onClick={() => setSwitcherOpen(true)}
+          <button
+            onClick={() => setSwitcherOpen(true)}
+            aria-label="More"
+            className="flex-1 flex items-center justify-center h-full touch-manipulation"
+          >
+            <motion.div
               className={cn(
-                'flex-1 flex flex-col items-center justify-center gap-1 transition-colors',
-                switcherOpen ? 'text-white' : 'text-zinc-600'
+                'flex items-center justify-center rounded-2xl transition-colors duration-200 relative',
+                switcherOpen ? 'bg-white/10' : ''
               )}
+              style={{ width: 48, height: 48 }}
+              whileTap={{ scale: 0.88 }}
             >
-              <div className="relative">
-                <Layout size={20} strokeWidth={switcherOpen ? 2.5 : 1.5} />
-                <div className="absolute -top-1 -right-1 w-2 h-2 bg-indigo-500 rounded-full border-2 border-[#0a0a0a]" />
-              </div>
-              <span className="text-[9px] font-bold tracking-tight uppercase opacity-80">More</span>
-            </button>
-          </div>
+              <Layout
+                size={26}
+                strokeWidth={switcherOpen ? 2.5 : 1.8}
+                className={switcherOpen ? 'text-white' : 'text-zinc-500'}
+              />
+              <div className="absolute top-2 right-2 w-2 h-2 bg-indigo-500 rounded-full border-2 border-[#0a0a0a]" />
+            </motion.div>
+          </button>
         </div>
       </div>
 
