@@ -2,24 +2,24 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
     <!-- PWA / Theme -->
     <meta name="theme-color" content="#0a0a0a" />
     <link rel="manifest" href="/manifest.json" />
 
     <!--
-      iOS PWA: black-translucent draws content edge-to-edge (behind status bar).
-      We use env(safe-area-inset-top) in the Header to push content below the notch,
-      and env(safe-area-inset-bottom) in the BottomNav to push above home indicator.
-      
-      The layout uses position:fixed on #root to guarantee the app spans the
-      full physical screen. No JavaScript height hacks needed.
+      iOS PWA layout: we deliberately do NOT use viewport-fit=cover.
+      iOS lays the app out inside the safe rectangle, so the html→body→#root
+      height:100% chain equals the visible area exactly — no bottom gap.
+      The status bar uses the opaque "black" style; iOS paints the status-bar
+      and home-indicator strips with the manifest background_color (#0a0a0a).
     -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <meta name="apple-mobile-web-app-title" content="Personal OS" />
-    <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
 
     <!-- SEO -->
     <meta name="description" content="Personal OS — your life, systematized." />
@@ -39,11 +39,31 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <!-- Register Service Worker -->
+    <!-- Register Service Worker + auto-update so new deploys land without reinstall -->
     <script>
       if ('serviceWorker' in navigator) {
+        let refreshing = false;
+        // When a new SW takes control, reload once to load the fresh build.
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
+        });
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js').catch(() => {});
+          navigator.serviceWorker.register('/sw.js').then((reg) => {
+            // Check for an updated SW on every launch.
+            reg.update();
+            reg.addEventListener('updatefound', () => {
+              const sw = reg.installing;
+              if (!sw) return;
+              sw.addEventListener('statechange', () => {
+                // A new SW is installed and ready — activate it immediately.
+                if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+                  sw.postMessage('SKIP_WAITING');
+                }
+              });
+            });
+          }).catch(() => {});
         });
       }
     </script>

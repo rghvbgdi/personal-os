@@ -2,75 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ─── iOS PWA Safe Area Variables ────────────────────────────────────── */
-:root {
-  --sat: env(safe-area-inset-top, 0px);
-  --sab: env(safe-area-inset-bottom, 0px);
-  --sal: env(safe-area-inset-left, 0px);
-  --sar: env(safe-area-inset-right, 0px);
-}
-
 /* ─── DEFINITIVE iOS PWA Full-Screen Strategy ────────────────────────── */
 /*
-   WHY position:fixed on #root:
-   
-   On iOS Safari standalone (PWA), every CSS height unit is broken:
-   - 100vh = includes area behind browser chrome = TOO TALL in Safari, but
-     in standalone mode the size is unpredictable
-   - 100dvh = dynamic but inconsistent in standalone
-   - 100% = requires perfect parent chain, breaks with keyboard
-   - -webkit-fill-available = deprecated, inconsistent
-   - window.innerHeight = returns the SAFE area height, which with
-     viewport-fit=cover + black-translucent is SHORTER than the full
-     physical screen → causes the bottom black gap
-   
-   The ONLY approach that ALWAYS works:
-   position:fixed; inset:0 on #root.
-   
-   In iOS standalone mode, position:fixed elements are anchored to the
-   VISUAL VIEWPORT which is the full physical screen when using
-   viewport-fit=cover. This means #root will always stretch from the
-   very top to the very bottom pixel of the screen — no gap possible.
-   
-   The safe area insets (env()) handle keeping content away from the
-   notch and home indicator.
+   THE ROOT CAUSE of the bottom black gap (chased across ~15 commits):
+
+   Every previous attempt kept `viewport-fit=cover` + `black-translucent`
+   and then tried to make the app fill the *physical* screen with a CSS
+   height unit (100vh → 100svh → 100dvh → -webkit-fill-available →
+   window.innerHeight → position:fixed inset:0). On iOS standalone that
+   combo makes the layout viewport and the physical screen disagree, so the
+   content box ends up SHORTER than the screen → the nav floats up and you
+   get black underneath. Swapping the unit never fixes the disagreement.
+
+   THE FIX: don't fight `cover`. We drop viewport-fit=cover (see index.html)
+   and let iOS lay the app out inside the *safe* rectangle. Then a plain
+   height:100% chain (html → body → #root) is EXACTLY the visible area —
+   a gap is now physically impossible. iOS paints the home-indicator strip
+   and status-bar strip with the manifest background_color (#0a0a0a), so it
+   stays seamlessly black with no env() math required.
 */
 
-html {
-  /* Fill the entire screen with the app background color.
-     This ensures even if there's a rendering gap, it's the same color. */
-  background: #0a0a0a;
+html,
+body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  background: #0a0a0a;
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  /* Use 100% — in standalone PWA, html fills the full viewport */
-  height: 100%;
 }
 
 body {
-  background: #0a0a0a;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  overscroll-behavior: none;
   color: #ffffff;
   font-family: 'Inter', system-ui, sans-serif;
-  /* Match html */
-  height: 100%;
-  width: 100%;
 }
 
-/* THE FIX: position:fixed inset:0 guarantees full physical screen coverage
-   on iOS standalone PWA with viewport-fit=cover */
 #root {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;

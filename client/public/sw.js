@@ -1,4 +1,4 @@
-const CACHE_NAME = 'personal-os-v9';
+const CACHE_NAME = 'personal-os-v10';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -9,6 +9,10 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
   );
   self.skipWaiting();
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
