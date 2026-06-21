@@ -92,7 +92,7 @@ export default function TodayTab() {
 
   const { data: tasksData, isLoading: tasksLoading } = useQuery({
     queryKey: QUERY_KEYS.TASKS_TODAY,
-    queryFn: () => taskApi.getToday().then((r) => r.data.data),
+    queryFn: () => taskApi.getToday().then((r) => r.data.data.tasks),
   });
 
   const { data: eventsData } = useQuery({

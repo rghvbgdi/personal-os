@@ -35,13 +35,13 @@ createRoot(document.getElementById('root')).render(
                   position="top-center"
                   toastOptions={{
                     style: {
-                      background: '#171717',
-                      color: '#fafafa',
-                      border: '1px solid #262626',
-                      borderRadius: '10px',
+                      background: '#282320',
+                      color: '#F5EDE0',
+                      border: '1px solid #403C39',
+                      borderRadius: '12px',
                       fontSize: '13px',
                     },
-                    success: { iconTheme: { primary: '#059669', secondary: '#fff' } },
+                    success: { iconTheme: { primary: '#D97757', secondary: '#fff' } },
                     error: { iconTheme: { primary: '#ef4444', secondary: '#fff' } },
                   }}
                 />

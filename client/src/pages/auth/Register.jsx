@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { motion } from 'framer-motion';
-import { Eye, EyeOff, Zap } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext.jsx';
 import Button from '@/components/ui/Button.jsx';
 import Input from '@/components/ui/Input.jsx';
@@ -61,7 +61,8 @@ export default function Register() {
         <motion.div
           animate={{ x: [0, 15, 0], y: [0, -15, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut', delay: 6 }}
-          className="absolute top-1/3 right-1/4 h-48 w-48 rounded-full bg-emerald-500/5 blur-3xl"
+          className="absolute top-1/3 right-1/4 h-48 w-48 rounded-full blur-3xl"
+          style={{ background: 'rgba(217,119,87,0.06)' }}
         />
       </div>
 
@@ -78,9 +79,16 @@ export default function Register() {
               initial={{ scale: 0.7, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.1, ease: 'easeOut' }}
-              className="inline-flex items-center justify-center h-16 w-16 rounded-3xl bg-accent shadow-glow mx-auto"
+              className="inline-flex items-center justify-center h-16 w-16 rounded-3xl mx-auto"
+              style={{ background: 'linear-gradient(135deg, #E88B6A, #C96B47)' }}
             >
-              <Zap className="h-8 w-8 text-white" />
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                <rect x="4" y="10" width="24" height="16" rx="3" fill="white" fillOpacity="0.95"/>
+                <rect x="4" y="10" width="24" height="5" rx="2" fill="white" fillOpacity="0.6"/>
+                <rect x="8" y="19" width="6" height="3" rx="1" fill="#D97757"/>
+                <rect x="16" y="19" width="8" height="3" rx="1" fill="white" fillOpacity="0.4"/>
+                <path d="M10 10V8a6 6 0 0112 0v2" stroke="white" strokeWidth="1.5" strokeOpacity="0.7" strokeLinecap="round"/>
+              </svg>
             </motion.div>
             <div>
               <h1 className="text-3xl font-bold text-text-primary tracking-tight">Create account</h1>
