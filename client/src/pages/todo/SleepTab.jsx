@@ -373,22 +373,6 @@ export default function SleepTab() {
           </motion.div>
         )}
 
-        {/* Insights */}
-        {insights.length > 0 && (
-          <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-            className="rounded-3xl p-5" style={{ background: SURF, border: `1px solid ${BORD}` }}
-          >
-            <p className="text-[10px] font-bold uppercase tracking-widest mb-4" style={{ color: MUTED }}>Insights</p>
-            <div className="space-y-3">
-              {insights.map((insight, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="w-2 h-2 rounded-full flex-shrink-0 mt-1.5" style={{ background: ORANGE }} />
-                  <p className="text-xs font-medium leading-relaxed" style={{ color: SEC }}>{insight}</p>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
       </div>
 
       <LogSleepSheet open={logOpen} onClose={closeSheet} editLog={editLog} />

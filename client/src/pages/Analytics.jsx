@@ -21,7 +21,7 @@ const SURF = '#282320';
 const BORD = '#403C39';
 
 const PIE_COLORS = [
-  '#D97757','#ef4444','#f59e0b','#60a5fa','#a78bfa','#34d399','#f472b6','#fb923c',
+  '#ef4444','#f59e0b','#D97757','#60a5fa','#a78bfa','#34d399','#f472b6','#fb923c',
 ];
 
 const ChartTooltip = ({ active, payload, label }) => {
@@ -118,7 +118,7 @@ export default function Analytics() {
 
   const STATS = [
     { label: 'Total Spent',   value: formatCurrency(totalExpense),  sub: `${analytics?.summary?.find(s=>s._id==='expense')?.count||0} transactions`, color: 'text-danger',  icon: Wallet },
-    { label: 'Total Income',  value: formatCurrency(totalIncome),   sub: `${analytics?.summary?.find(s=>s._id==='income')?.count||0} entries`,      color: 'text-accent',  icon: TrendingUp },
+    { label: 'Total Income',  value: formatCurrency(totalIncome),   sub: `${analytics?.summary?.find(s=>s._id==='income')?.count||0} entries`,      color: 'text-[#22c55e]',  icon: TrendingUp },
     { label: 'Invested',      value: formatCurrency(totalInvested), sub: `${analytics?.summary?.find(s=>s._id==='investment')?.count||0} entries`,   color: 'text-info',    icon: TrendingDown },
     { label: 'Net Cash Flow', value: formatCurrency(netCashFlow),   sub: `${savingsRate >= 0 ? savingsRate : 0}% savings rate · ${periodLabel}`,    color: netCashFlow >= 0 ? 'text-accent' : 'text-danger', icon: Activity },
   ];
@@ -169,7 +169,7 @@ export default function Analytics() {
               <p className="text-xs text-[#78716C] mt-0.5">{periodLabel}</p>
             </div>
             <div className="flex items-center gap-3 text-xs text-[#78716C]">
-              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#D97757]" />Income</span>
+              <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#22c55e]" />Income</span>
               <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#ef4444]" />Expense</span>
               <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#60a5fa]" />Invest</span>
             </div>
@@ -188,8 +188,8 @@ export default function Analytics() {
                 <BarChart data={trendData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }} barCategoryGap="30%">
                   <defs>
                     <linearGradient id="incBar" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#D97757" stopOpacity={1} />
-                      <stop offset="100%" stopColor="#D97757" stopOpacity={0.7} />
+                      <stop offset="0%" stopColor="#22c55e" stopOpacity={1} />
+                      <stop offset="100%" stopColor="#22c55e" stopOpacity={0.7} />
                     </linearGradient>
                     <linearGradient id="expBar" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#ef4444" stopOpacity={1} />
@@ -204,6 +204,7 @@ export default function Analytics() {
                   <YAxis tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                   <Tooltip content={<ChartTooltip />} cursor={{ fill: 'rgba(217,119,87,0.05)', radius: 4 }} />
                   <Bar dataKey="income" name="Income" fill="url(#incBar)" radius={[6,6,0,0]} maxBarSize={22} />
+
                   <Bar dataKey="expense" name="Expense" fill="url(#expBar)" radius={[6,6,0,0]} maxBarSize={22} />
                   <Bar dataKey="investment" name="Investment" fill="url(#invBar)" radius={[6,6,0,0]} maxBarSize={22} />
                 </BarChart>
@@ -211,8 +212,8 @@ export default function Analytics() {
                 <AreaChart data={trendData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="incArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#D97757" stopOpacity={0.25} />
-                      <stop offset="95%" stopColor="#D97757" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="expArea" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#ef4444" stopOpacity={0.25} />
@@ -226,7 +227,7 @@ export default function Analytics() {
                   <XAxis dataKey="period" {...xAxisProps} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 11, fill: '#78716C' }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                   <Tooltip content={<ChartTooltip />} />
-                  <Area type="monotone" dataKey="income" name="Income" stroke="#D97757" strokeWidth={2} fill="url(#incArea)" dot={false} />
+                  <Area type="monotone" dataKey="income" name="Income" stroke="#22c55e" strokeWidth={2} fill="url(#incArea)" dot={false} />
                   <Area type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" strokeWidth={2} fill="url(#expArea)" dot={false} />
                   <Area type="monotone" dataKey="investment" name="Investment" stroke="#60a5fa" strokeWidth={2} fill="url(#invArea)" dot={false} />
                 </AreaChart>

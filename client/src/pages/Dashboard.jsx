@@ -161,7 +161,7 @@ export default function Dashboard() {
                 value={formatCurrency(totalIncome)}
                 subtitle={periodLabel}
                 icon={TrendingUp}
-                color="text-accent"
+                color="text-[#22c55e]"
               />
               <StatCard
                 index={2}
@@ -169,7 +169,7 @@ export default function Dashboard() {
                 value={formatCurrency(Math.max(0, savings))}
                 subtitle={`${savingsRate >= 0 ? savingsRate : 0}% of income`}
                 icon={PiggyBank}
-                color={savings >= 0 ? 'text-accent' : 'text-danger'}
+                color={savings >= 0 ? 'text-[#22c55e]' : 'text-danger'}
               />
               <StatCard
                 index={3}
@@ -193,7 +193,7 @@ export default function Dashboard() {
                 <p className="text-xs text-text-muted mt-0.5">Income vs Expenses · {periodLabel}</p>
               </div>
               <div className="flex items-center gap-3 text-xs text-text-muted">
-                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-accent" />Income</span>
+                <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#22c55e]" />Income</span>
                 <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-danger" />Expense</span>
               </div>
             </div>
@@ -210,8 +210,8 @@ export default function Dashboard() {
                       <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="incGrad2" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#D97757" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#D97757" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#22c55e" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="period" {...xAxisProps} axisLine={false} tickLine={false} />
@@ -224,7 +224,7 @@ export default function Dashboard() {
                     width={0}
                   />
                   <Tooltip content={<ChartTooltip />} />
-                  <Area type="monotone" dataKey="income" name="Income" stroke="#D97757" strokeWidth={1.5} fill="url(#incGrad2)" dot={false} />
+                  <Area type="monotone" dataKey="income" name="Income" stroke="#22c55e" strokeWidth={1.5} fill="url(#incGrad2)" dot={false} />
                   <Area type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" strokeWidth={1.5} fill="url(#expGrad2)" dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
@@ -272,7 +272,7 @@ export default function Dashboard() {
                 <h3 className="text-sm font-semibold text-text-primary">Savings Breakdown</h3>
                 <p className="text-xs text-text-muted mt-0.5">{periodLabel}</p>
               </div>
-              <span className={cn('text-lg font-bold', savings >= 0 ? 'text-accent' : 'text-danger')}>
+              <span className={cn('text-lg font-bold', savings >= 0 ? 'text-[#22c55e]' : 'text-danger')}>
                 {savings >= 0 ? '+' : ''}{formatCurrency(savings)}
               </span>
             </div>

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Wallet, Code2, StickyNote,
   BarChart3, PieChart,
-  LogOut, ChevronRight, X, CheckSquare, Moon, CalendarDays,
+  LogOut, ChevronRight, X, CheckSquare, Moon,
   Home, Zap, Layout
 } from 'lucide-react';
 import { cn } from '@/utils/cn.js';
@@ -20,10 +20,9 @@ const EXPENSE_TABS = [
 ];
 
 const TODO_TABS = [
-  { icon: Home,            label: 'Today',     to: ROUTES.TODO_TODAY },
-  { icon: CheckSquare,     label: 'Tasks',     to: ROUTES.TODO_TASKS },
-  { icon: CalendarDays,    label: 'Calendar',  to: ROUTES.TODO_CALENDAR },
-  { icon: Moon,            label: 'Sleep',     to: ROUTES.TODO_SLEEP },
+  { icon: Home,        label: 'Today',  to: ROUTES.TODO_TODAY },
+  { icon: CheckSquare, label: 'Tasks',  to: ROUTES.TODO_TASKS },
+  { icon: Moon,        label: 'Sleep',  to: ROUTES.TODO_SLEEP },
 ];
 
 const PLACEMENT_TABS = [

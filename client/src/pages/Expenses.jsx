@@ -48,7 +48,7 @@ const schema = z.object({
 
 const TYPE_CONFIG = {
   expense:    { label: 'Expense',    activeClass: 'bg-[#ef4444]/10 text-[#ef4444] border-[#ef4444]/25',   prefix: '−', amountColor: 'text-[#ef4444]' },
-  income:     { label: 'Income',     activeClass: 'bg-[#D97757]/10 text-[#D97757] border-[#D97757]/25',   prefix: '+', amountColor: 'text-[#D97757]' },
+  income:     { label: 'Income',     activeClass: 'bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/25',   prefix: '+', amountColor: 'text-[#22c55e]' },
   investment: { label: 'Invest',     activeClass: 'bg-[#60a5fa]/10 text-[#60a5fa] border-[#60a5fa]/25',  prefix: '→', amountColor: 'text-[#60a5fa]' },
 };
 
@@ -385,7 +385,7 @@ export default function Expenses() {
             <div className="grid grid-cols-3 gap-3 mb-3">
               <div>
                 <p className="text-[9px] font-bold text-[#78716C] uppercase tracking-wider mb-1">Income</p>
-                <p className="text-sm font-bold text-[#D97757]">{formatCurrency(totalIncome)}</p>
+                <p className="text-sm font-bold text-[#22c55e]">{formatCurrency(totalIncome)}</p>
               </div>
               <div>
                 <p className="text-[9px] font-bold text-[#78716C] uppercase tracking-wider mb-1">Spent</p>
@@ -393,7 +393,7 @@ export default function Expenses() {
               </div>
               <div>
                 <p className="text-[9px] font-bold text-[#78716C] uppercase tracking-wider mb-1">Saved</p>
-                <p className={cn('text-sm font-bold', savings >= 0 ? 'text-[#D97757]' : 'text-[#ef4444]')}>
+                <p className={cn('text-sm font-bold', savings >= 0 ? 'text-[#22c55e]' : 'text-[#ef4444]')}>
                   {savings >= 0 ? '+' : ''}{formatCurrency(savings)}
                 </p>
               </div>
@@ -408,12 +408,12 @@ export default function Expenses() {
             </div>
             <div className="flex justify-between mt-1.5 text-[10px] text-[#78716C]">
               <span>{Math.min(100, Math.round((totalExpense / totalIncome) * 100))}% used</span>
-              <span className="text-[#D97757] font-semibold">{savingsRate >= 0 ? savingsRate : 0}% saved</span>
+              <span className="text-[#22c55e] font-semibold">{savingsRate >= 0 ? savingsRate : 0}% saved</span>
             </div>
             {totalInvested > 0 && (
               <p className="text-[10px] text-[#78716C] mt-1.5">
                 {formatCurrency(totalInvested)} invested ·{' '}
-                <span className={cn('font-semibold', (savings - totalInvested) >= 0 ? 'text-[#D97757]' : 'text-[#ef4444]')}>
+                <span className={cn('font-semibold', (savings - totalInvested) >= 0 ? 'text-[#22c55e]' : 'text-[#ef4444]')}>
                   {formatCurrency(savings - totalInvested)} net
                 </span>
               </p>
