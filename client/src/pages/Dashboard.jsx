@@ -126,11 +126,16 @@ export default function Dashboard() {
     : { tick: { fontSize: 10, fill: '#6b7280' }, interval: 'preserveStartEnd' };
 
   return (
-    <PageLayout
-      title={`Good ${now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening'}, ${user?.name?.split(' ')[0] || ''} 👋`}
-      subtitle={format(now, 'EEEE, MMMM d')}
-    >
+    <PageLayout>
       <div className="space-y-4">
+
+        {/* ── Greeting ── */}
+        <div className="pt-1 pb-2">
+          <h1 className="text-xl font-bold text-text-primary leading-tight">
+            Good {now.getHours() < 12 ? 'morning' : now.getHours() < 17 ? 'afternoon' : 'evening'}, {user?.name?.split(' ')[0] || 'Raghav'} 👋
+          </h1>
+          <p className="text-xs text-text-muted mt-1">{format(now, 'EEEE, MMMM d')}</p>
+        </div>
 
         {/* ── Time range filter — top of content, full width on mobile ── */}
         <TimeRangeFilter onChange={setDateRange} defaultRange="yearly" />
@@ -205,22 +210,21 @@ export default function Dashboard() {
                       <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="incGrad2" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#059669" stopOpacity={0.15} />
-                      <stop offset="95%" stopColor="#059669" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#D97757" stopOpacity={0.2} />
+                      <stop offset="95%" stopColor="#D97757" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis dataKey="period" {...xAxisProps} axisLine={false} tickLine={false} />
-                  {/* Hide YAxis on mobile — saves ~40px horizontal space */}
                   <YAxis
                     className="hidden sm:block"
-                    tick={{ fontSize: 10, fill: '#525252' }}
+                    tick={{ fontSize: 10, fill: '#78716C' }}
                     axisLine={false}
                     tickLine={false}
                     tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
                     width={0}
                   />
                   <Tooltip content={<ChartTooltip />} />
-                  <Area type="monotone" dataKey="income" name="Income" stroke="#059669" strokeWidth={1.5} fill="url(#incGrad2)" dot={false} />
+                  <Area type="monotone" dataKey="income" name="Income" stroke="#D97757" strokeWidth={1.5} fill="url(#incGrad2)" dot={false} />
                   <Area type="monotone" dataKey="expense" name="Expense" stroke="#ef4444" strokeWidth={1.5} fill="url(#expGrad2)" dot={false} />
                 </AreaChart>
               </ResponsiveContainer>

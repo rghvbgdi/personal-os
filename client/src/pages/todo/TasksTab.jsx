@@ -12,11 +12,27 @@ import { cn } from '@/utils/cn.js';
 import toast from 'react-hot-toast';
 import PageLayout from '@/components/layout/PageLayout.jsx';
 
+const ORANGE = '#D97757';
+const BG     = '#1C1917';
+const SURF   = '#282320';
+const SURF2  = '#312D2A';
+const BORD   = '#403C39';
+const MUTED  = '#78716C';
+const SEC    = '#A8A29E';
+const PRIM   = '#F5EDE0';
+
 const PRIORITY_COLORS = {
-  p1: '#ef4444', p2: '#f59e0b', p3: '#6c63ff', p4: '#6b7280',
+  p1: '#ef4444',
+  p2: '#f59e0b',
+  p3: ORANGE,
+  p4: MUTED,
 };
+
 const STATUS_COLORS = {
-  todo: '#6b7280', inprogress: '#6c63ff', blocked: '#ef4444', done: '#22c55e',
+  todo: MUTED,
+  inprogress: ORANGE,
+  blocked: '#ef4444',
+  done: '#4ade80',
 };
 
 // ── Add Task Sheet ─────────────────────────────────────────────────────────────
@@ -53,10 +69,15 @@ function AddTaskSheet({ open, onClose, segment }) {
 
   const categories = segment === 'work' ? WORK_CATEGORIES : STUDENT_CATEGORIES;
 
-  // Auto-detect meeting in title
   const handleTitleChange = (v) => {
     setTitle(v);
     if (v.toLowerCase().includes('meeting') && segment === 'work') setCategory('meeting-prep');
+  };
+
+  const inputStyle = {
+    background: SURF2,
+    border: `1px solid ${BORD}`,
+    color: PRIM,
   };
 
   return (
@@ -74,30 +95,29 @@ function AddTaskSheet({ open, onClose, segment }) {
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             className="fixed left-0 right-0 bottom-0 z-50 rounded-t-[32px] overflow-hidden"
             style={{
-              background: '#0a0a0a',
-              borderTop: '1px solid #1a1a1a',
+              background: SURF,
+              borderTop: `1px solid ${BORD}`,
               paddingBottom: 'calc(env(safe-area-inset-bottom) + 20px)',
               maxHeight: '90dvh',
               overflowY: 'auto',
             }}
           >
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-12 h-1.5 rounded-full bg-zinc-800" />
+              <div className="w-10 h-1 rounded-full" style={{ background: BORD }} />
             </div>
 
             <div className="px-6 pb-6">
-              <h3 className="text-lg font-bold text-white mb-6">New Task</h3>
+              <h3 className="text-base font-bold mb-5" style={{ color: PRIM }}>New Task</h3>
 
-              {/* Title */}
               <input
                 autoFocus
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
                 placeholder="What needs to be done?"
-                className="w-full py-4 px-4 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/60 transition-colors mb-4"
+                className="w-full py-4 px-4 rounded-2xl text-sm placeholder:text-[#544F4C] focus:outline-none mb-4"
+                style={inputStyle}
               />
 
-              {/* Priority pills */}
               <div className="flex gap-2 mb-4">
                 {TASK_PRIORITIES.map((p) => (
                   <button
@@ -105,35 +125,38 @@ function AddTaskSheet({ open, onClose, segment }) {
                     onClick={() => setPriority(p.value)}
                     className={cn(
                       'flex-1 py-3 rounded-2xl text-[10px] font-bold border transition-all touch-manipulation',
-                      priority === p.value
-                        ? 'text-white border-transparent'
-                        : 'text-zinc-500 border-zinc-800 hover:border-zinc-700',
+                      priority === p.value ? 'text-white border-transparent' : 'border-transparent',
                     )}
-                    style={priority === p.value ? { background: PRIORITY_COLORS[p.value] } : {}}
+                    style={{
+                      background: priority === p.value ? PRIORITY_COLORS[p.value] : SURF2,
+                      borderColor: priority === p.value ? PRIORITY_COLORS[p.value] : BORD,
+                      color: priority === p.value ? '#fff' : MUTED,
+                    }}
                   >
                     {p.value.toUpperCase()}
                   </button>
                 ))}
               </div>
 
-              {/* Quick date + time */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <input
                   type="date" value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white focus:outline-none focus:border-indigo-500/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-2xl text-sm focus:outline-none"
+                  style={inputStyle}
                 />
                 <input
                   type="time" value={dueTime}
                   onChange={(e) => setDueTime(e.target.value)}
-                  className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white focus:outline-none focus:border-indigo-500/60 transition-colors"
+                  className="w-full px-4 py-3 rounded-2xl text-sm focus:outline-none"
+                  style={inputStyle}
                 />
               </div>
 
-              {/* More options toggle */}
               <button
                 onClick={() => setShowMore(v => !v)}
-                className="flex items-center gap-1.5 text-xs font-bold text-zinc-500 mb-4 touch-manipulation"
+                className="flex items-center gap-1.5 text-xs font-bold mb-4 touch-manipulation"
+                style={{ color: MUTED }}
               >
                 {showMore ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 {showMore ? 'Less options' : 'More options'}
@@ -147,33 +170,33 @@ function AddTaskSheet({ open, onClose, segment }) {
                     exit={{ opacity: 0, height: 0 }}
                     className="space-y-3 overflow-hidden mb-4"
                   >
-                    {/* Category */}
                     <select
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
-                      className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white focus:outline-none focus:border-indigo-500/60"
+                      className="w-full px-4 py-3 rounded-2xl text-sm focus:outline-none"
+                      style={inputStyle}
                     >
                       {categories.map((c) => (
                         <option key={c.value} value={c.value}>{c.icon} {c.label}</option>
                       ))}
                     </select>
 
-                    {/* Status */}
                     <select
                       value={status}
                       onChange={(e) => setStatus(e.target.value)}
-                      className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white focus:outline-none focus:border-indigo-500/60"
+                      className="w-full px-4 py-3 rounded-2xl text-sm focus:outline-none"
+                      style={inputStyle}
                     >
                       {TASK_STATUSES.map((s) => (
                         <option key={s.value} value={s.value}>{s.label}</option>
                       ))}
                     </select>
 
-                    {/* Effort */}
                     <select
                       value={effort}
                       onChange={(e) => setEffort(e.target.value)}
-                      className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white focus:outline-none focus:border-indigo-500/60"
+                      className="w-full px-4 py-3 rounded-2xl text-sm focus:outline-none"
+                      style={inputStyle}
                     >
                       <option value="">Effort estimate</option>
                       {EFFORT_OPTIONS.map((e) => (
@@ -186,14 +209,16 @@ function AddTaskSheet({ open, onClose, segment }) {
                         value={projectTag}
                         onChange={(e) => setProjectTag(e.target.value)}
                         placeholder="Sprint / Project tag"
-                        className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/60"
+                        className="w-full px-4 py-3 rounded-2xl text-sm placeholder:text-[#544F4C] focus:outline-none"
+                        style={inputStyle}
                       />
                     ) : (
                       <input
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
                         placeholder="Subject (DSA, OS, CN…)"
-                        className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/60"
+                        className="w-full px-4 py-3 rounded-2xl text-sm placeholder:text-[#544F4C] focus:outline-none"
+                        style={inputStyle}
                       />
                     )}
 
@@ -202,13 +227,13 @@ function AddTaskSheet({ open, onClose, segment }) {
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Notes…"
                       rows={2}
-                      className="w-full px-4 py-3 bg-zinc-900 border border-zinc-800 rounded-2xl text-sm text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/60 resize-none"
+                      className="w-full px-4 py-3 rounded-2xl text-sm placeholder:text-[#544F4C] focus:outline-none resize-none"
+                      style={inputStyle}
                     />
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Submit */}
               <button
                 disabled={!title.trim() || mutation.isPending}
                 onClick={() => mutation.mutate({
@@ -217,7 +242,8 @@ function AddTaskSheet({ open, onClose, segment }) {
                   dueTime: dueTime || undefined,
                   projectTag, subject, notes, effortEstimate: effort,
                 })}
-                className="w-full py-4 rounded-2xl bg-indigo-500 text-white text-sm font-bold disabled:opacity-40 transition-opacity touch-manipulation"
+                className="w-full py-4 rounded-2xl text-white text-sm font-bold disabled:opacity-40 transition-opacity touch-manipulation"
+                style={{ background: ORANGE }}
               >
                 Add Task
               </button>
@@ -239,47 +265,47 @@ function TaskCard({ task, onToggle, onDelete }) {
     <motion.div
       initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      className={cn(
-        'rounded-3xl bg-zinc-900/50 border overflow-hidden',
-        task.status === 'blocked' ? 'border-rose-500/25' : 'border-zinc-800',
-        task.isCompleted && 'opacity-50',
-      )}
+      className="rounded-3xl overflow-hidden"
+      style={{
+        background: task.status === 'blocked' ? `${SURF}` : SURF,
+        border: `1px solid ${task.status === 'blocked' ? '#ef4444' + '40' : BORD}`,
+        opacity: task.isCompleted ? 0.5 : 1,
+      }}
     >
       <div className="flex items-start gap-4 px-5 py-4">
-        {/* Priority bar */}
         <div
           className="w-1 self-stretch rounded-full flex-shrink-0 mt-1"
-          style={{ background: PRIORITY_COLORS[task.priority] || '#6b7280', minHeight: 24 }}
+          style={{ background: PRIORITY_COLORS[task.priority] || MUTED, minHeight: 24 }}
         />
 
-        {/* Checkbox */}
         <button
           onClick={() => onToggle(task._id)}
           className={cn(
             'mt-1 h-6 w-6 rounded-lg flex-shrink-0 flex items-center justify-center border-2 transition-all touch-manipulation',
-            task.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-600 hover:border-indigo-500',
           )}
+          style={{
+            background: task.isCompleted ? ORANGE : 'transparent',
+            borderColor: task.isCompleted ? ORANGE : MUTED,
+          }}
         >
           {task.isCompleted && <Check size={14} className="text-white" strokeWidth={3} />}
         </button>
 
-        {/* Info */}
         <div className="flex-1 min-w-0">
-          <p className={cn(
-            'text-base font-semibold leading-tight',
-            task.isCompleted ? 'line-through text-zinc-500' : 'text-white',
-          )}>
+          <p className={cn('text-base font-semibold leading-tight')}
+            style={{ color: task.isCompleted ? MUTED : PRIM, textDecoration: task.isCompleted ? 'line-through' : 'none' }}>
             {task.title}
           </p>
           <div className="flex items-center gap-2 mt-2 flex-wrap">
             {task.dueDate && (
-              <span className="text-[11px] font-bold text-zinc-400">
+              <span className="text-[11px] font-bold" style={{ color: SEC }}>
                 {format(new Date(task.dueDate), 'MMM d')}{task.dueTime ? ` · ${task.dueTime}` : ''}
               </span>
             )}
-            {cat && <span className="text-[11px] font-medium text-zinc-400">{cat.icon} {cat.label}</span>}
+            {cat && <span className="text-[11px] font-medium" style={{ color: SEC }}>{cat.icon} {cat.label}</span>}
             {task.projectTag && (
-              <span className="text-[10px] px-2 py-1 rounded-md bg-indigo-500/10 text-indigo-400 font-bold">
+              <span className="text-[10px] px-2 py-1 rounded-md font-bold"
+                style={{ background: `${ORANGE}15`, color: ORANGE }}>
                 {task.projectTag}
               </span>
             )}
@@ -293,7 +319,8 @@ function TaskCard({ task, onToggle, onDelete }) {
           {task.subTasks?.length > 0 && (
             <button
               onClick={() => setExpanded(v => !v)}
-              className="flex items-center gap-1 mt-2 text-[11px] font-medium text-zinc-500 touch-manipulation"
+              className="flex items-center gap-1 mt-2 text-[11px] font-medium touch-manipulation"
+              style={{ color: MUTED }}
             >
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
               {task.subTasks.filter((s) => s.isCompleted).length}/{task.subTasks.length} subtasks
@@ -301,32 +328,34 @@ function TaskCard({ task, onToggle, onDelete }) {
           )}
         </div>
 
-        {/* Delete */}
         <button
           onClick={() => onDelete(task._id)}
-          className="p-2 rounded-full text-zinc-600 hover:text-rose-500 hover:bg-rose-500/10 transition-colors touch-manipulation flex-shrink-0"
+          className="p-2 rounded-full transition-colors touch-manipulation flex-shrink-0"
+          style={{ color: MUTED }}
         >
           <Trash2 size={16} />
         </button>
       </div>
 
-      {/* Subtasks expanded */}
       <AnimatePresence>
         {expanded && task.subTasks?.length > 0 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-t border-zinc-800"
+            className="overflow-hidden"
+            style={{ borderTop: `1px solid ${BORD}` }}
           >
-            <div className="px-5 py-3 bg-zinc-950 space-y-2">
+            <div className="px-5 py-3 space-y-2" style={{ background: SURF2 }}>
               {task.subTasks.map((st, i) => (
                 <div key={i} className="flex items-center gap-3">
-                  <div className={cn(
-                    'h-4 w-4 rounded flex-shrink-0 border',
-                    st.isCompleted ? 'bg-emerald-500 border-emerald-500' : 'border-zinc-700',
-                  )} />
-                  <span className={cn('text-sm font-medium', st.isCompleted ? 'line-through text-zinc-600' : 'text-zinc-400')}>
+                  <div className={cn('h-4 w-4 rounded flex-shrink-0 border')}
+                    style={{
+                      background: st.isCompleted ? ORANGE : 'transparent',
+                      borderColor: st.isCompleted ? ORANGE : BORD,
+                    }} />
+                  <span className="text-sm font-medium"
+                    style={{ color: st.isCompleted ? MUTED : SEC, textDecoration: st.isCompleted ? 'line-through' : 'none' }}>
                     {st.title}
                   </span>
                 </div>
@@ -372,77 +401,83 @@ export default function TasksTab() {
   const completed = tasks.filter((t) => t.isCompleted);
 
   return (
-    <PageLayout
-      title="Tasks"
-      subtitle="Manage your to-dos."
-      actions={
-        <button
-          onClick={() => setAddOpen(true)}
-          className="flex items-center justify-center h-8 w-8 rounded-full bg-indigo-500 text-white shadow-lg touch-manipulation"
-        >
-          <Plus size={16} />
-        </button>
-      }
-    >
+    <PageLayout>
       <div className="pb-8">
-        {/* ── Segment pills ── */}
-        <div className="flex rounded-2xl border border-zinc-800 overflow-hidden bg-zinc-900/50 mb-5">
+
+        {/* Page title + Add button */}
+        <div className="flex items-center justify-between pt-1 mb-5">
+          <h1 className="text-base font-semibold" style={{ color: PRIM }}>Tasks</h1>
+          <button
+            onClick={() => setAddOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-semibold text-white touch-manipulation"
+            style={{ background: ORANGE }}
+          >
+            <Plus size={13} /> Add
+          </button>
+        </div>
+
+        {/* Segment pills */}
+        <div className="flex rounded-2xl overflow-hidden mb-5"
+          style={{ border: `1px solid ${BORD}`, background: SURF2 }}>
           {[
-            { value: 'work', label: '💼 Work' },
+            { value: 'work',    label: '💼 Work' },
             { value: 'student', label: '📚 Student' },
           ].map(({ value, label }) => (
             <button
               key={value}
               onClick={() => setSegment(value)}
-              className={cn(
-                'flex-1 py-3.5 text-[13px] font-bold transition-all duration-200 touch-manipulation border-r last:border-r-0 border-zinc-800',
-                segment === value ? 'bg-indigo-500 text-white' : 'text-zinc-500',
-              )}
+              className="flex-1 py-3.5 text-[13px] font-bold transition-all duration-200 touch-manipulation border-r last:border-r-0"
+              style={{
+                background: segment === value ? ORANGE : 'transparent',
+                color: segment === value ? '#fff' : MUTED,
+                borderColor: BORD,
+              }}
             >
               {label}
             </button>
           ))}
         </div>
 
-        {/* ── Filter pills ── */}
+        {/* Filter pills */}
         <div className="flex gap-2 mb-5 overflow-x-auto pb-1" style={{ scrollbarWidth: 'none' }}>
           {[
-            { value: 'all', label: 'All' },
-            { value: 'today', label: 'Today' },
-            { value: 'week', label: 'This Week' },
+            { value: 'all',     label: 'All' },
+            { value: 'today',   label: 'Today' },
+            { value: 'week',    label: 'This Week' },
             { value: 'overdue', label: 'Overdue' },
           ].map(({ value, label }) => (
             <button
               key={value}
               onClick={() => setFilter(value)}
-              className={cn(
-                'flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold border transition-all touch-manipulation',
-                filter === value
-                  ? 'bg-indigo-500 text-white border-indigo-500'
-                  : 'bg-zinc-900/50 text-zinc-400 border-zinc-800',
-              )}
+              className="flex-shrink-0 px-4 py-2 rounded-xl text-xs font-bold border transition-all touch-manipulation"
+              style={{
+                background: filter === value ? ORANGE : SURF,
+                color: filter === value ? '#fff' : MUTED,
+                borderColor: filter === value ? ORANGE : BORD,
+              }}
             >
               {label}
             </button>
           ))}
         </div>
 
-        {/* ── Search ── */}
+        {/* Search */}
         <div className="relative mb-6">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" style={{ color: MUTED }} />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tasks…"
-            className="w-full pl-11 pr-4 py-3.5 text-sm bg-zinc-900/50 border border-zinc-800 rounded-2xl text-white placeholder:text-zinc-600 focus:outline-none focus:border-indigo-500/50 transition-colors"
+            className="w-full pl-11 pr-4 py-3.5 text-sm rounded-2xl placeholder:text-[#544F4C] focus:outline-none transition-colors"
+            style={{ background: SURF, border: `1px solid ${BORD}`, color: PRIM }}
           />
         </div>
 
-        {/* ── Task list ── */}
+        {/* Task list */}
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 rounded-3xl bg-zinc-900 border border-zinc-800 animate-pulse" />
+              <div key={i} className="h-20 rounded-3xl animate-pulse" style={{ background: SURF, border: `1px solid ${BORD}` }} />
             ))}
           </div>
         ) : (
@@ -450,8 +485,8 @@ export default function TasksTab() {
             {active.length === 0 && (
               <div className="text-center py-16">
                 <p className="text-4xl mb-4">✨</p>
-                <p className="text-base font-bold text-white mb-1">You're all caught up</p>
-                <p className="text-sm text-zinc-500">Tap + to add a new task</p>
+                <p className="text-base font-bold mb-1" style={{ color: PRIM }}>You're all caught up</p>
+                <p className="text-sm" style={{ color: MUTED }}>Tap Add to create a task</p>
               </div>
             )}
             {active.map((task) => (
@@ -463,11 +498,11 @@ export default function TasksTab() {
               />
             ))}
 
-            {/* Completed section */}
             {completed.length > 0 && (
               <button
                 onClick={() => setShowCompleted(v => !v)}
-                className="flex items-center justify-center gap-2 mt-6 mb-3 text-xs font-bold text-zinc-500 touch-manipulation w-full bg-zinc-900/30 py-3 rounded-2xl border border-zinc-800/50"
+                className="flex items-center justify-center gap-2 mt-6 mb-3 text-xs font-bold w-full py-3 rounded-2xl touch-manipulation"
+                style={{ background: SURF2, border: `1px solid ${BORD}`, color: MUTED }}
               >
                 {showCompleted ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                 {completed.length} Completed

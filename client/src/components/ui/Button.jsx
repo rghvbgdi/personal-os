@@ -3,7 +3,7 @@ import { cn } from '@/utils/cn.js';
 import Spinner from './Spinner.jsx';
 
 const variants = {
-  primary: 'bg-accent text-white hover:bg-accent-hover shadow-glow-sm hover:shadow-glow',
+  primary: 'bg-accent text-white hover:bg-accent-hover',
   secondary: 'bg-surface-2 text-text-primary hover:bg-border border border-border',
   ghost: 'text-text-secondary hover:text-text-primary hover:bg-surface-2',
   danger: 'bg-danger/10 text-danger hover:bg-danger/20 border border-danger/20',

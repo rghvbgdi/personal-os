@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  LayoutDashboard, Wallet, Code2, StickyNote, Timer,
-  BarChart3, PieChart, Target, Flame, Grid3X3,
+  LayoutDashboard, Wallet, Code2, StickyNote,
+  BarChart3, PieChart,
   LogOut, ChevronRight, X, CheckSquare, Moon, CalendarDays,
   Home, Zap, Layout
 } from 'lucide-react';
@@ -38,24 +38,24 @@ const MODULES = [
     label: 'Expense Tracker',
     icon: Wallet,
     to: ROUTES.DASHBOARD,
-    bg: 'bg-emerald-500/10',
-    text: 'text-emerald-400'
+    bg: 'bg-[#D97757]/12',
+    text: 'text-[#D97757]',
   },
   {
     id: 'todo',
-    label: 'Todo List',
+    label: 'Todo & Sleep',
     icon: CheckSquare,
     to: ROUTES.TODO_TODAY,
-    bg: 'bg-blue-500/10',
-    text: 'text-blue-400'
+    bg: 'bg-[#60A5FA]/12',
+    text: 'text-[#60A5FA]',
   },
   {
     id: 'placement',
     label: 'Placement Hub',
     icon: Code2,
     to: ROUTES.PLACEMENT,
-    bg: 'bg-purple-500/10',
-    text: 'text-purple-400'
+    bg: 'bg-[#A8A29E]/12',
+    text: 'text-[#A8A29E]',
   },
 ];
 
@@ -92,23 +92,11 @@ export default function BottomNav() {
 
   return (
     <>
-      {/*
-        iOS PWA LAYOUT:
-        
-        This nav is a FLEX CHILD of the PageLayout flex column.
-        NOT position:fixed. It naturally sits at the bottom.
-        
-        #root is position:fixed inset:0 — spans the full physical screen.
-        This nav's padding-bottom: env(safe-area-inset-bottom) extends
-        the background into the home indicator zone for a seamless look.
-        
-        flex-shrink-0 prevents it from being compressed.
-      */}
       <div
         className="flex-shrink-0 lg:hidden"
         style={{
-          background: '#0a0a0a',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          background: '#1C1917',
+          borderTop: '1px solid rgba(217,119,87,0.1)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         }}
       >
@@ -123,17 +111,19 @@ export default function BottomNav() {
                 className="flex-1 flex items-center justify-center h-full touch-manipulation"
               >
                 <motion.div
-                  className={cn(
-                    'flex items-center justify-center rounded-2xl transition-colors duration-200',
-                    isActive ? 'bg-white/10' : ''
-                  )}
-                  style={{ width: 48, height: 48, marginBottom: 10 }}
+                  className="flex items-center justify-center rounded-2xl transition-colors duration-200"
+                  style={{
+                    width: 48,
+                    height: 48,
+                    marginBottom: 16,
+                    background: isActive ? 'rgba(217,119,87,0.14)' : 'transparent',
+                  }}
                   whileTap={{ scale: 0.88 }}
                 >
                   <Icon
                     size={26}
                     strokeWidth={isActive ? 2.5 : 1.8}
-                    className={isActive ? 'text-white' : 'text-zinc-500'}
+                    color={isActive ? '#D97757' : '#78716C'}
                   />
                 </motion.div>
               </button>
@@ -146,19 +136,21 @@ export default function BottomNav() {
             className="flex-1 flex items-center justify-center h-full touch-manipulation"
           >
             <motion.div
-              className={cn(
-                'flex items-center justify-center rounded-2xl transition-colors duration-200 relative',
-                switcherOpen ? 'bg-white/10' : ''
-              )}
-              style={{ width: 48, height: 48, marginBottom: 10 }}
+              className="flex items-center justify-center rounded-2xl transition-colors duration-200 relative"
+              style={{
+                width: 48,
+                height: 48,
+                marginBottom: 16,
+                background: switcherOpen ? 'rgba(217,119,87,0.14)' : 'transparent',
+              }}
               whileTap={{ scale: 0.88 }}
             >
               <Layout
                 size={26}
                 strokeWidth={switcherOpen ? 2.5 : 1.8}
-                className={switcherOpen ? 'text-white' : 'text-zinc-500'}
+                color={switcherOpen ? '#D97757' : '#78716C'}
               />
-              <div className="absolute top-2 right-2 w-2 h-2 bg-indigo-500 rounded-full border-2 border-[#0a0a0a]" />
+              <div className="absolute top-2 right-2 w-2 h-2 bg-[#D97757] rounded-full border-2 border-[#1C1917]" />
             </motion.div>
           </button>
         </div>
@@ -173,7 +165,7 @@ export default function BottomNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSwitcherOpen(false)}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm lg:hidden"
             />
             <motion.div
               key="sheet"
@@ -181,50 +173,50 @@ export default function BottomNav() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed inset-x-0 bottom-0 z-50 rounded-t-[40px] px-6 pt-4 lg:hidden"
+              className="fixed inset-x-0 bottom-0 z-50 rounded-t-[36px] px-6 pt-4 lg:hidden"
               style={{
-                background: '#0f0f0f',
-                borderTop: '1px solid rgba(255,255,255,0.1)',
+                background: '#231F1C',
+                borderTop: '1px solid rgba(217,119,87,0.1)',
                 paddingBottom: 'calc(env(safe-area-inset-bottom, 34px) + 24px)',
               }}
             >
-              <div className="w-12 h-1 bg-zinc-800 rounded-full mx-auto mb-8" />
+              <div className="w-10 h-1 bg-[#403C39] rounded-full mx-auto mb-8" />
 
-              <div className="flex items-center justify-between mb-8">
-                <h2 className="text-xl font-black text-white tracking-tight">Personal OS</h2>
+              <div className="flex items-center justify-between mb-7">
+                <h2 className="text-lg font-bold text-[#F5EDE0] tracking-tight">Personal OS</h2>
                 <button
                   onClick={() => setSwitcherOpen(false)}
-                  className="p-2 rounded-full bg-zinc-900 text-zinc-500"
+                  className="p-2 rounded-full bg-[#312D2A] text-[#78716C]"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {MODULES.map((m) => (
                   <button
                     key={m.id}
                     onClick={() => navigateTo(m.to)}
-                    className="w-full group relative flex items-center gap-4 p-4 rounded-3xl bg-zinc-900/50 border border-white/5 active:scale-[0.98] transition-all"
+                    className="w-full group relative flex items-center gap-4 p-4 rounded-2xl active:scale-[0.98] transition-all"
+                    style={{ background: '#2D2926', border: '1px solid rgba(217,119,87,0.08)' }}
                   >
-                    <div className={cn('w-12 h-12 rounded-2xl flex items-center justify-center', m.bg)}>
-                      <m.icon size={24} className={m.text} />
+                    <div className={cn('w-11 h-11 rounded-xl flex items-center justify-center', m.bg)}>
+                      <m.icon size={22} className={m.text} />
                     </div>
                     <div className="flex-1 text-left">
-                      <p className="text-sm font-black text-white">{m.label}</p>
-                      <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">Component</p>
+                      <p className="text-sm font-semibold text-[#F5EDE0]">{m.label}</p>
                     </div>
-                    <ChevronRight size={18} className="text-zinc-700 group-active:translate-x-1 transition-transform" />
+                    <ChevronRight size={16} className="text-[#544F4C] group-active:translate-x-1 transition-transform" />
                   </button>
                 ))}
               </div>
 
               <button
                 onClick={handleLogout}
-                className="w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-3xl text-rose-500 font-black text-sm active:bg-rose-500/10 transition-colors"
+                className="w-full mt-7 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-[#EF4444] font-semibold text-sm active:bg-[#EF4444]/10 transition-colors"
               >
-                <LogOut size={18} />
-                <span>SIGN OUT</span>
+                <LogOut size={16} />
+                <span>Sign out</span>
               </button>
             </motion.div>
           </>

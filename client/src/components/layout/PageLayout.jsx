@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import Sidebar from './Sidebar.jsx';
-import Header from './Header.jsx';
 import BottomNav from './BottomNav.jsx';
 
 const pageVariants = {
@@ -9,31 +8,11 @@ const pageVariants = {
   exit:    { opacity: 0, scale: 1.01 },
 };
 
-export default function PageLayout({ title, subtitle, actions, action, children }) {
-  const headerActions = actions || action;
-
+export default function PageLayout({ children }) {
   return (
-    /*
-      Layout strategy (iOS PWA compatible):
-      
-      #root is position:fixed inset:0 — it spans the FULL physical viewport
-      on iOS standalone PWA (including behind status bar & home indicator).
-      This outer div fills #root with flex-col.
-      Children stack: [Sidebar(desktop)] [Header] [Main(scrollable)] [BottomNav].
-      
-      BottomNav is a flex child (NOT position:fixed). It sits at the bottom
-      of the flex column. Its padding-bottom: env(safe-area-inset-bottom) pushes
-      interactive elements above the home indicator while its background color
-      fills the home indicator zone seamlessly.
-    */
-    <div className="flex h-full overflow-hidden select-none" style={{ background: '#0a0a0a' }}>
-      {/* Sidebar — desktop only */}
+    <div className="flex h-full overflow-hidden select-none" style={{ background: '#1C1917' }}>
       <Sidebar />
-
-      {/* Main content column */}
       <div className="flex flex-col flex-1 min-w-0 min-h-0">
-        <Header title={title} subtitle={subtitle} actions={headerActions} />
-
         <main
           className="flex-1 overflow-y-auto overflow-x-hidden min-h-0"
           style={{
@@ -52,8 +31,6 @@ export default function PageLayout({ title, subtitle, actions, action, children 
             {children}
           </motion.div>
         </main>
-
-        {/* Bottom nav — flex child at the bottom (mobile only) */}
         <BottomNav />
       </div>
     </div>

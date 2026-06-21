@@ -21,7 +21,7 @@ function BurnBar({ pct, over }) {
         animate={{ width: `${clamped}%` }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="h-full rounded-full"
-        style={{ background: over ? '#ef4444' : pct >= 80 ? '#f59e0b' : '#059669' }}
+        style={{ background: over ? '#ef4444' : pct >= 80 ? '#f59e0b' : '#D97757' }}
       />
     </div>
   );
@@ -177,7 +177,7 @@ export default function Budget() {
     : format(new Date(year, month - 1, 1), 'MMM yyyy');
 
   return (
-    <PageLayout title="Budget" subtitle="Set limits · track spending">
+    <PageLayout>
       <div className="space-y-5 pb-8">
 
         {/* Period selector */}
